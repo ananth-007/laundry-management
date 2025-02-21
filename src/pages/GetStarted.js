@@ -22,6 +22,10 @@ import whyAssuranceImg from '../assets/why-assurance-img.png';
 import whyWeighingScaleImg from '../assets/why-weighing-img.png';
 import whyDeliveryImg from '../assets/why-delivery-img.png';
 import whyPaymentImg from '../assets/why-payment-img.png';
+import testimonialYingLiImg from '../assets/testimonial-yingli-img.png';
+import testimonialSarahWilliamsImg from '../assets/testimonial-sarahwilliams-img.png';
+import testimonialEmilyRobertsImg from '../assets/testimonial-emilyroberts-img.png';
+import testimonialJohnDoeImg from '../assets/testimonial-johndoe-img.png';
 import "./GetStarted.css";
 
 
@@ -132,29 +136,40 @@ const GetStarted = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="testimonials text-center py-5 bg-light">
+      <section className="testimonials text-center py-5 mt-5">
         <Container>
-          <h2>What They Say About Us</h2>
-          <Row className="mt-4">
-            <Col md={4}>
-              <div className="p-3 border rounded">
+          <h1>What They Say About Us</h1>
+          <Row className="mt-5 justify-content-center m-6">
+            <Col md={3}>
+              <div className="p-3 border testimonials-card">
+                <img src={testimonialYingLiImg} alt="Ying Li"/>
                 <h5>Ying Li</h5>
                 <p>⭐⭐⭐⭐⭐</p>
-                <p>"Great service! Clothes always come back fresh and clean."</p>
+                <p>"Great laundry service! <br></br>Easy booking,  and fast <br></br>delivery—my clothes came back<br></br> fresh and clean.<br></br> Highly recommended!"</p>
               </div>
             </Col>
-            <Col md={4}>
-              <div className="p-3 border rounded">
+            <Col md={3}>
+              <div className="p-3 border testimonials-card">
+                <img src={testimonialSarahWilliamsImg} alt="Sarah Williams"/>
                 <h5>Sarah Williams</h5>
                 <p>⭐⭐⭐⭐⭐</p>
-                <p>"Affordable and quick service. Will use again!"</p>
+                <p>"Excellent service! <br></br>Quick pickup and delivery,<br></br> affordable pricing, and my clothes<br></br> were perfectly cleaned. <br></br>Will definitely use again!"</p>
               </div>
             </Col>
-            <Col md={4}>
-              <div className="p-3 border rounded">
+            <Col md={3}>
+              <div className="p-3 border testimonials-card">
+                <img src={testimonialEmilyRobertsImg} alt="Emily Roberts"/>
                 <h5>Emily Roberts</h5>
                 <p>⭐⭐⭐⭐⭐</p>
-                <p>"Convenient and top-quality cleaning."</p>
+                <p>"Very convenient and reliable!<br></br> The tracking feature is great,<br></br> and the quality of cleaning is<br></br> top-notch.<br></br> Highly satisfied!"</p>
+              </div>
+            </Col>
+            <Col md={3}>
+              <div className="p-3 border testimonials-card">
+                <img src={testimonialJohnDoeImg} alt="Emily Roberts"/>
+                <h5>John Doe</h5>
+                <p>⭐⭐⭐⭐⭐</p>
+                <p>"Excellent service—both convenient <br></br> and reliable! The tracking system<br></br> is very useful, and <br></br>the cleaning quality is exceptional. <br></br>Truly satisfied!"</p>
               </div>
             </Col>
           </Row>
@@ -163,14 +178,14 @@ const GetStarted = () => {
 
       {/* Contact Section */}
       <section className="py-5">
-        <div className="container">
-          <h2 className="text-center mb-5">Contact Us</h2>
+        <div className="container bg-info-subtle contact p-5">
+          <h1 className="text-center mb-5">Contact Us</h1>
           <div className="row justify-content-center">
             <div className="col-md-8">
               <form>
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <input type="text" className="form-control" placeholder="Your name" />
+                    <input type="text" className="form-control " placeholder="Your name" />
                   </div>
                   <div className="col-md-6 mb-3">
                     <input type="tel" className="form-control" placeholder="Your phone" />
