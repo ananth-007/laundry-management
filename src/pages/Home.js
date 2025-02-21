@@ -9,10 +9,10 @@ import washIron from "../assets/wash-iron.png";
 import steamIron from "../assets/steam-iron.png";
 import dryClean from "../assets/dry-clean.png";
 import aboutImg from "../assets/about-img.png";
-import "./GetStarted.css";
+import "./Home.css";
 
 
-const GetStarted = () => {
+const Home = () => {
 
   return (
     
@@ -158,4 +158,4 @@ const GetStarted = () => {
   );
 };
 
-export default GetStarted;
+export default Home;

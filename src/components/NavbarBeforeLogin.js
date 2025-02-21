@@ -54,28 +54,10 @@ const NavbarBeforeLogin = () => {
             </li>
 
             {/* Services Dropdown */}
-            <li className="nav-item dropdown">
-              <button
-                className={`nav-link dropdown-toggle fw-bold btn nav-hover ${isDropdownOpen ? "active" : ""}`}
-                type="button"
-                id="servicesDropdown"
-                aria-expanded={isDropdownOpen}
-                onClick={toggleDropdown}
-                ref={dropdownRef}
-              >
-                Services
-              </button>
-              <ul className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`} aria-labelledby="servicesDropdown">
-                <li><a className="dropdown-item fw-regular" href="#">Wash & Fold</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Wash & Iron</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Steam Iron</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Dry Cleaning</a></li>
-              </ul>
-            </li>
-
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Prices</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Stores</a></li>
+            
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Services</a></li>
             <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Schedule a Pickup</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">About</a></li>
             <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Contact</a></li>
           </ul>
 
