@@ -1,6 +1,16 @@
+.bg-info-subtle {
+  background-color: #bce3fa;
+}
+
 .hero {
   background: #d6eaff;
   height: 650px;
+}
+.hero-img {
+  max-width: 100%;
+}
+.hero-btn {
+  border-radius: 15px;
 }
 
 .services img {
@@ -9,18 +19,6 @@
 
 .services img {
   width: 50%;
-}
-
-.container-bg {
-  background: rgba(172, 228, 253, 0.6);
-}
-
-.bg-info-subtle {
-  background-color: #bce3fa;
-}
-
-.hero-img {
-  max-width: 100%;
 }
 
 .services-center {
@@ -35,12 +33,45 @@
   background-color: #d6eaff;
   margin-top: 15%;
   margin-bottom: 0;
-  height: 332px;
+  height: 378px;
 }
 .about-img {
   width: 80%;
-  margin-top: -35%;
+  margin-top: -28%;
   margin-left: -20%;
+}
+ul {
+  list-style-type: none;
+}
+ul li img {
+  width: 40px;
+  margin: 5px;
+  margin-left: -5%;
+  margin-right: 15px;
+  padding-right: 5px;
+}
+
+.first-order-img1 {
+  width: 70%;
+  margin-left: 50px;
+  border-radius: 100px;
+}
+.first-order-img2 {
+  width: 70%;
+  margin-top: 100px;
+  border-radius: 100px;
+}
+.fo-btn {
+  border-radius: 15px;
+  background-color: #bce3fa;
+  color: black;
+  font-weight: 700;
+  border: 1px solid black;
+}
+
+.why-img {
+  width: 35%;
+  margin-top: 20px;
 }
 
 .testimonials .border {
