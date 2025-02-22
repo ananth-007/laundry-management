@@ -63,7 +63,7 @@ ul li img {
 }
 .fo-btn {
   border-radius: 15px;
-  background-color: #bce3fa;
+  background-color: #47b1d4;
   color: black;
   font-weight: 700;
   border: 1px solid black;
@@ -80,6 +80,7 @@ ul li img {
 .testimonials-card {
   border-radius: 30px;
   background-color: #47b1d4;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .contact {
@@ -88,6 +89,14 @@ ul li img {
 }
 .contact-border {
   border-radius: 50px;
+}
+.contact-btn {
+  border-radius: 15px;
+  background-color: #47b1d4;
+  color: black;
+  font-weight: 700;
+  border: 1px solid black;
+  padding: 5px 25px;
 }
 
 @media (max-width: 850px) {

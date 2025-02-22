@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from '../assets/logo.png';
-import './Footer.css';
+import './FooterBeforeLogin.css';
 
 const Footer = () => {
     return (
@@ -15,26 +15,16 @@ const Footer = () => {
             <div className="col-md-2 mt-4 Footer-order">
               <h5>Menu</h5>
               <ul className="list-unstyled mt-4">
-                <li><a href="#" className="text-lght">Home</a></li>
-                <li><a href="#" className="text-lght">Services</a></li>
-                <li><a href="#" className="text-lght">Prices</a></li>
-                <li><a href="#" className="text-lght">Stores</a></li>
-                <li><a href="#" className="text-lght">Schedule a pickup</a></li>
-              </ul>
-            </div>
-            <div className="col-md-2 mt-4 Footer-order">
-              <h5>Services</h5>
-              <ul className="list-unstyled mt-4">
-                <li><a href="#" className="text-lght">Wash and Fold</a></li>
-                <li><a href="#" className="text-lght">Wash and Iron</a></li>
-                <li><a href="#" className="text-lght">Steam Iron</a></li>
-                <li><a href="#" className="text-lght">Dry Cleaning</a></li>
+                <li><a href="/GetStarted" className="text-lght">Home</a></li>
+                <li><a href="#service" className="text-lght">Services</a></li>
+                <li><a href="#about" className="text-lght">About</a></li>
+                <li><a href="#first-order" className="text-lght">Schedule a pickup</a></li>
               </ul>
             </div>
             <div className="col-md-2 mt-4 Footer-order">
               <h5>About</h5>
               <ul className="list-unstyled mt-4">
-                <li><a href="#" className="text-lght">Contact Us</a></li>
+                <li><a href="#contact" className="text-lght">Contact Us</a></li>
                 <li><a href="#" className="text-lght">Terms and Conditions</a></li>
                 <li><a href="#" className="text-lght">Privacy Policy</a></li>
               </ul>

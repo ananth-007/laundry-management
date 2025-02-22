@@ -40,7 +40,7 @@ const NavbarBeforeLogin = () => {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
           aria-controls="navbarNav"
-          aria-expanded="true"
+          aria-expanded={isDropdownOpen}
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
@@ -49,16 +49,11 @@ const NavbarBeforeLogin = () => {
         {/* Navbar Items */}
         <div className="collapse navbar-collapse d-flex justify-content-between align-items-center" id="navbarNav">
           <ul className="navbar-nav ms-auto d-flex align-items-center">
-            <li className="nav-item">
-              <a className="nav-link fw-bold nav-hover" href="#">Home</a>
-            </li>
-
-            {/* Services Dropdown */}
-            
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Services</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Schedule a Pickup</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">About</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#">Contact</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="/GetStarted">Home</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#service">Services</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#first-order">Schedule a Pickup</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#about">About</a></li>
+            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#contact">Contact</a></li>
           </ul>
 
         </div>

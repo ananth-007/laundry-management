@@ -35,7 +35,7 @@ function Login() {
           </form>
 
           <p className="mt-3 text-center">
-            Don't have an account? <a href="Signup.js" className="fw-bold text-dark">Create an account</a>
+            Don't have an account? <a href="/Signup" className="fw-bold text-dark">Create an account</a>
           </p>
         </div>
       </div>

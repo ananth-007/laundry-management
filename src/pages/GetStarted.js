@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import Footer from "../components/Footer";
+import FooterBeforeLogin from "../components/FooterBeforeLogin";
 import NavbarBeforeLogin from "../components/NavbarBeforeLogin";
 import heroLogo from "../assets/hero-bg.png";
 import washFold from "../assets/wash-fold.png";
@@ -38,7 +38,7 @@ const GetStarted = () => {
       <NavbarBeforeLogin />
 
       {/* Hero Section */}
-      <section className="hero text-center py-5 bg-info-subtle bg-height">
+      <section id="hero" className="hero text-center py-5 bg-info-subtle bg-height">
           <Container>
             <Row className="align-items-center">
               <Col md={6} className="text-start">
@@ -47,7 +47,7 @@ const GetStarted = () => {
                   Streamline your laundry routine with our intuitive app that offers 
                   on-demand pickup, eco-friendly washing, and convenient scheduling.
                 </p>
-                <Button variant="dark" className="me-2 mt-3 hero-btn"><a href="Signup.js" style={{ textDecoration: 'none', color: 'inherit' }}>Join Now</a></Button>
+                <Button variant="dark" className="me-2 mt-3 hero-btn"><a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Join Now</a></Button>
                 <Button variant="outline-dark" className="mt-3 hero-btn"><a href="#service" style={{ textDecoration: 'none', color: 'inherit' }}>Discover More</a></Button>
               </Col>
               <Col md={6}>
@@ -58,7 +58,7 @@ const GetStarted = () => {
       </section>
 
       {/* Services Section */}
-      <section className="text-center py-5 container-fluid shadow-lg rounded-5 justify-content-center services-center" id="service">
+      <section id="service" className="text-center py-5 container-fluid shadow-lg rounded-5 justify-content-center services-center">
         <Container>
           <Row className="services">
             <Col md={3}><img src={washFold} alt="Wash & Fold"/><p><strong>Wash & Fold</strong></p></Col>
@@ -70,7 +70,7 @@ const GetStarted = () => {
       </section>
 
       {/* About Section */}
-      <section className="about text-center py-5 bg-info-subtle">
+      <section id="about" className="about text-center py-5 bg-info-subtle">
         <Container>
           <Row>
             <Col md={6}>
@@ -95,7 +95,7 @@ const GetStarted = () => {
       </section>
 
       {/* First Order Section */}
-      <section className="first-order text-start py-5">
+      <section id="first-order" className="first-order text-start py-5">
         <Container>
           <Row className="py-5">
             <Col md={3}>
@@ -112,14 +112,14 @@ const GetStarted = () => {
                 <li><img src={foli2Img} alt="Eco-friendly"/>Free Pickup and Delivery for Dry Cleaning and Laundry</li>
                 <li><img src={foli3Img} alt="Delivery"/>Free Mask Cleaning with Dry Cleaning Order</li>
               </ul>
-              <Button className="me-2 mt-3 fo-btn"><a href="Signup.js" style={{ textDecoration: 'none', color: 'inherit' }}>Make your First Order</a></Button>
+              <Button className="me-2 mt-3 fo-btn"><a href="/Signup" style={{ textDecoration: 'none', color: 'inherit' }}>Make your First Order</a></Button>
             </Col>
           </Row>
         </Container>
       </section>
 
       {/* Why Us Section */}
-      <section className="why-us text-center py-5 bg-info-subtle">
+      <section id="why-us" className="why-us text-center py-5 bg-info-subtle">
         <Container>
           <h1>Why Us?</h1>
           <p>We provide advantages that will certainly guarantee the <br></br>cleanliness and completeness of you goods</p>
@@ -136,7 +136,7 @@ const GetStarted = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="testimonials text-center py-5 mt-5">
+      <section id="testimonial" className="testimonials text-center py-5 mt-5">
         <Container>
           <h1>What They Say About Us</h1>
           <Row className="mt-5 justify-content-center m-6">
@@ -177,7 +177,7 @@ const GetStarted = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="py-5">
+      <section id="contact" className="py-5">
         <div className="container bg-info-subtle contact p-5">
           <h1 className="text-center mb-5">Contact Us</h1>
           <div className="row justify-content-center">
@@ -198,7 +198,7 @@ const GetStarted = () => {
                   <textarea className="form-control" rows="4" placeholder="Your message"></textarea>
                 </div>
                 <div className="text-center">
-                  <button type="submit" className="btn btn-primary">Submit</button>
+                <Button className="me-2 mt-3 contact-btn">Submit</Button>
                 </div>
               </form>
             </div>
@@ -207,7 +207,7 @@ const GetStarted = () => {
       </section>
 
       {/* Footer Section */}
-      <Footer />
+      <FooterBeforeLogin />
     </div>
   );
 };
