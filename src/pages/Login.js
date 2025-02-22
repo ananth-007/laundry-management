@@ -28,10 +28,9 @@ function Login() {
             <div className="mb-3">
               <input type="password" className="form-control bg-light" placeholder="Password" />
             </div>
-
-            <button type="submit" className="btn btn-primary w-100 fw-bold">
-              Login
-            </button>
+            <a href="/HomePage">
+              <button type="submit" className="btn btn-primary w-100 fw-bold"><a href="/HomePage" style={{textDecoration:'none',color:'inherit'}}>Login</a></button>
+            </a>          
           </form>
 
           <p className="mt-3 text-center">

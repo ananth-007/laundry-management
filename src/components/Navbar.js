@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from '../assets/logo.png';
+import "./Navbar.css";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -10,12 +12,25 @@ const Navbar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light shadow-sm container-bg">
+    <nav className="navbar navbar-expand-lg shadow-sm container-bg bg-info-subtle">
       <div className="container">
         {/* Logo */}
         <a href="#" className="navbar-brand">
-          <img src={logo} width="200px" height="55px" alt="Logo" />
+          <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
         </a>
 
         {/* Mobile Toggle Button */}
@@ -25,7 +40,7 @@ const Navbar = () => {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
           aria-controls="navbarNav"
-          aria-expanded="false"
+          aria-expanded={isDropdownOpen}
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
