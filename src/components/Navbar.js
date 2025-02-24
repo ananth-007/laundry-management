@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from '../assets/logo.png';
+import logo from "../assets/logo.png";
 import "./Navbar.css";
 import { useEffect } from "react";
 
@@ -47,10 +47,15 @@ const Navbar = () => {
         </button>
 
         {/* Navbar Items */}
-        <div className="collapse navbar-collapse d-flex justify-content-between align-items-center" id="navbarNav">
+        <div
+          className="collapse navbar-collapse d-flex justify-content-between align-items-center"
+          id="navbarNav"
+        >
           <ul className="navbar-nav ms-auto d-flex align-items-center">
             <li className="nav-item">
-              <a className="nav-link fw-bold" href="#">Home</a>
+              <a className="nav-link fw-bold" href="/HomePage">
+                Home
+              </a>
             </li>
 
             {/* Services Dropdown */}
@@ -65,18 +70,53 @@ const Navbar = () => {
               >
                 Services
               </button>
-              <ul className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`} aria-labelledby="servicesDropdown">
-                <li><a className="dropdown-item fw-regular" href="#">Wash & Fold</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Wash & Iron</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Steam Iron</a></li>
-                <li><a className="dropdown-item fw-regular" href="#">Dry Cleaning</a></li>
+              <ul
+                className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}
+                aria-labelledby="servicesDropdown"
+              >
+                <li>
+                  <a className="dropdown-item fw-regular" href="#">
+                    Wash & Fold
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item fw-regular" href="#">
+                    Wash & Iron
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item fw-regular" href="#">
+                    Steam Iron
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item fw-regular" href="#">
+                    Dry Cleaning
+                  </a>
+                </li>
               </ul>
             </li>
 
-            <li className="nav-item"><a className="nav-link fw-bold" href="#">Prices</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold" href="#">Stores</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold" href="#">Schedule a Pickup</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold" href="#">Contact</a></li>
+            <li className="nav-item">
+              <a className="nav-link fw-bold" href="#">
+                Prices
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link fw-bold" href="/Stores">
+                Stores
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link fw-bold" href="#">
+                Schedule a Pickup
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link fw-bold" href="#">
+                Contact
+              </a>
+            </li>
           </ul>
 
           {/* Profile Icon */}

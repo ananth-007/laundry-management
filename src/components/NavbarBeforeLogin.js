@@ -1,26 +1,9 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./nav.css";
 import logo from "../assets/logo.png";
-import { useEffect } from "react";
 
 const NavbarBeforeLogin = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <div className="nav-bg">
       <nav className="navbar navbar-expand-lg shadow-sm container-bg bg-info-subtle">
@@ -53,7 +36,7 @@ const NavbarBeforeLogin = () => {
             <div className="offcanvas-body">
               <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li className="nav-item">
-                  <a className="nav-link mx-lg-2 active" href="#hero">
+                  <a className="nav-link mx-lg-2" href="#hero">
                     Home
                   </a>
                 </li>

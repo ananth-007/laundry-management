@@ -5,7 +5,9 @@
 .bg-info-subtle {
   background-color: #bce3fa;
 }
-
+.navbar::before {
+  color: #000;
+}
 .login-btn {
   background-color: #009970;
   color: #fff;

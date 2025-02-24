@@ -120,3 +120,20 @@ ul li img {
     width: 100%;
   }
 }
+
+.brands-slider {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.brands-track {
+  display: flex;
+  width: max-content;
+}
+
+.brand-item {
+  width: 150px;
+  margin: 0 15px;
+  flex-shrink: 0;
+}
