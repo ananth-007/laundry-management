@@ -1,16 +1,12 @@
 import React, { useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../components/NavbarBeforeLogin.css";
-import logo from '../assets/logo.png';
+import "./nav.css";
+import logo from "../assets/logo.png";
 import { useEffect } from "react";
 
 const NavbarBeforeLogin = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -26,40 +22,77 @@ const NavbarBeforeLogin = () => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light shadow-sm container-bg bg-info-subtle">
-      <div className="container">
-        {/* Logo */}
-        <a href="#" className="navbar-brand">
-          <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
-        </a>
+    <div className="nav-bg">
+      <nav className="navbar navbar-expand-lg shadow-sm container-bg bg-info-subtle">
+        <div className="container">
+          {/* Logo */}
+          <a href="/GetStarted" className="navbar-brand">
+            <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
+          </a>
 
-        {/* Mobile Toggle Button */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded={isDropdownOpen}
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        {/* Navbar Items */}
-        <div className="collapse navbar-collapse d-flex justify-content-between align-items-center" id="navbarNav">
-          <ul className="navbar-nav ms-auto d-flex align-items-center">
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="/GetStarted">Home</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#service">Services</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#first-order">Schedule a Pickup</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#about">About</a></li>
-            <li className="nav-item"><a className="nav-link fw-bold nav-hover" href="#contact">Contact</a></li>
-          </ul>
-
+          {/* Navbar links */}
+          <div
+            className="offcanvas offcanvas-end"
+            tabIndex="-1"
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+                <a href="/GetStarted" className="navbar-brand">
+                  <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
+                </a>
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li className="nav-item">
+                  <a className="nav-link mx-lg-2 active" href="#hero">
+                    Home
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link mx-lg-2" href="#service">
+                    Services
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link mx-lg-2" href="#about">
+                    About
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link mx-lg-2" href="#first-order">
+                    Schedule a pickup
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link mx-lg-2" href="#contact">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button
+            className="navbar-toggler pe-0"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
         </div>
-
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 

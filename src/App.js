@@ -5,6 +5,8 @@ import GetStarted from './pages/GetStarted';
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import HomePage from "./pages/Home";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 
 const App = () => {
   return (
