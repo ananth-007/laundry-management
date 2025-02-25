@@ -3,43 +3,78 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar.js";
+
 import heroLogo from "../assets/hero-bg.png";
+
 import washFold from "../assets/wash-fold.png";
 import washIron from "../assets/wash-iron.png";
 import steamIron from "../assets/steam-iron.png";
 import dryClean from "../assets/dry-clean.png";
+
 import aboutImg from "../assets/about-img.png";
 import li1Img from "../assets/li-1.png";
 import li2Img from "../assets/li-2.png";
 import li3Img from "../assets/li-3.png";
+
 import manIronImg from "../assets/man-ironing.png";
 import foldedClothesImg from "../assets/folded-clothes.png";
 import foli1Img from "../assets/fo-li1.png";
 import foli2Img from "../assets/fo-li2.png";
 import foli3Img from "../assets/fo-li3.png";
+
 import whyHygienicImg from "../assets/why-hygiene-img.png";
 import whyAssuranceImg from "../assets/why-assurance-img.png";
 import whyWeighingScaleImg from "../assets/why-weighing-img.png";
 import whyDeliveryImg from "../assets/why-delivery-img.png";
 import whyPaymentImg from "../assets/why-payment-img.png";
+
 import testimonialYingLiImg from "../assets/testimonial-yingli-img.png";
 import testimonialSarahWilliamsImg from "../assets/testimonial-sarahwilliams-img.png";
 import testimonialEmilyRobertsImg from "../assets/testimonial-emilyroberts-img.png";
 import testimonialJohnDoeImg from "../assets/testimonial-johndoe-img.png";
+
+import malleshwaramStoreImg from "../assets/malleshwaram-store.png";
+import bellandurStoreImg from "../assets/bellandur-store.png";
+import rrNagarStoreImg from "../assets/rr-nagar-store.png";
+import krPuramStoreImg from "../assets/kr-puram-store.png";
+
+import tideLogo from "../assets/tide-logo.png";
+import arielLogo from "../assets/ariel-logo.png";
+import comfortLogo from "../assets/comfort-logo.png";
+import surfExcelLogo from "../assets/surf-excel-logo.png";
+import vanishLogo from "../assets/vanish-logo.png";
+import downyLogo from "../assets/downy-logo.png";
+import wooliteLogo from "../assets/woolite-logo.png";
+import oxicleanLogo from "../assets/oxiclean-logo.png";
+import voltasLogo from "../assets/voltas-logo.png";
+import whirlpoolLogo from "../assets/whirlpool-logo.png";
+import samsungLogo from "../assets/samsung-logo.png";
+import philipsLogo from "../assets/philips-logo.png";
+import lgLogo from "../assets/lg-logo.png";
+import godrejLogo from "../assets/godrej-logo.png";
+import boschLogo from "../assets/bosch-logo.png";
+
 import "./Home.css";
 
 const HomePage = () => {
   const sliderRef = useRef(null);
 
   const trustedBrands = [
-    { id: 1, name: "Tide", image: "tide-logo.png" },
-    { id: 2, name: "Ariel", image: "ariel-logo.png" },
-    { id: 3, name: "Comfort", image: "comfort-logo.png" },
-    { id: 4, name: "Surf Excel", image: "surf-excel-logo.png" },
-    { id: 5, name: "Vanish", image: "vanish-logo.png" },
-    { id: 6, name: "Downy", image: "downy-logo.png" },
-    { id: 7, name: "Woolite", image: "woolite-logo.png" },
-    { id: 8, name: "Oxiclean", image: "oxiclean-logo.png" },
+    { id: 1, name: "Tide", image: tideLogo },
+    { id: 2, name: "Bosch", image: boschLogo },
+    { id: 3, name: "Ariel", image: arielLogo },
+    { id: 4, name: "Voltas", image: voltasLogo },
+    { id: 5, name: "Comfort", image: comfortLogo },
+    { id: 6, name: "Surf Excel", image: surfExcelLogo },
+    { id: 7, name: "Whirlpool", image: whirlpoolLogo },
+    { id: 8, name: "Vanish", image: vanishLogo },
+    { id: 9, name: "Godrej", image: godrejLogo },
+    { id: 10, name: "Downy", image: downyLogo },
+    { id: 11, name: "Samsung", image: samsungLogo },
+    { id: 12, name: "Woolite", image: wooliteLogo },
+    { id: 13, name: "Philips", image: philipsLogo },
+    { id: 14, name: "Oxiclean", image: oxicleanLogo },
+    { id: 15, name: "Lg", image: lgLogo },
   ];
 
   const nearbyStores = [
@@ -48,24 +83,28 @@ const HomePage = () => {
       name: "Bachelor's Dhobi Laundry Store, Malleshwaram",
       address:
         "Pragathi Mansion, Margosa Rd, Malleshwaram, Bengaluru, Karnataka 560003, India",
-      image: "malleshwaram-store.jpg",
-      distance: "1.2 km",
+      image: malleshwaramStoreImg,
     },
     {
       id: 2,
       name: "Bachelor's Dhobi Laundry Store, Bellandur",
       address:
         "24, Palm Ave, Green Glen Layout, Bellandur, Bengaluru, Karnataka 560103, India",
-      image: "bellandur-store.jpg",
-      distance: "2.5 km",
+      image: bellandurStoreImg,
     },
     {
       id: 3,
       name: "Bachelor's Dhobi Laundry Store, RR Nagar",
       address:
-        "BFML Layout, 5th Stage, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098, India",
-      image: "rr-nagar-store.jpg",
-      distance: "3.7 km",
+        "BFML Layout, 2nd main road, 5th Stage, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098, India",
+      image: rrNagarStoreImg,
+    },
+    {
+      id: 4,
+      name: "Bachelor's Dhobi Laundry Store, K R Puram",
+      address:
+        "KHB Colony, Bhattarahalli, Hosakotehoralnahalli, K R Puram, Bengaluru, Karnataka 560049, India",
+      image: krPuramStoreImg,
     },
   ];
 
@@ -255,12 +294,12 @@ const HomePage = () => {
                 {/* Original set of brands */}
                 {trustedBrands.map((brand) => (
                   <div key={brand.id} className="brand-item">
-                    <div className="bg-white shadow-sm rounded p-3 h-100 d-flex align-items-center justify-content-center">
+                    <div className="bg-white rounded p-3 h-100 d-flex align-items-center justify-content-center">
                       <img
                         src={brand.image}
                         alt={`${brand.name} logo`}
                         className="img-fluid"
-                        style={{ maxHeight: "80px" }}
+                        style={{ maxHeight: "90px" }}
                       />
                     </div>
                   </div>
@@ -269,7 +308,7 @@ const HomePage = () => {
                 {/* Duplicate set of brands to create seamless loop */}
                 {trustedBrands.map((brand) => (
                   <div key={`duplicate-${brand.id}`} className="brand-item">
-                    <div className="bg-white shadow-sm rounded p-3 h-100 d-flex align-items-center justify-content-center">
+                    <div className="bg-white rounded p-3 h-100 d-flex align-items-center justify-content-center">
                       <img
                         src={brand.image}
                         alt={`${brand.name} logo`}
@@ -296,7 +335,7 @@ const HomePage = () => {
       </section>
 
       {/* Nearby Stores Section */}
-      <section className="py-5">
+      <section className="py-5 bg-info-subtle">
         <Container>
           <Row className="mb-4">
             <Col className="text-center">
@@ -309,39 +348,41 @@ const HomePage = () => {
 
           <Row>
             {nearbyStores.map((store) => (
-              <Col key={store.id} md={4} className="mb-4">
-                <Card className="h-100 shadow-sm">
+              <Col
+                key={store.id}
+                md={3}
+                className="mb-4 d-flex flex-column align-items-center p-3"
+              >
+                <Card className="h-100 shadow-lg">
                   <Card.Img
                     variant="top"
                     src={store.image}
                     alt={store.name}
-                    className="img-fluid"
-                    style={{ height: "200px", objectFit: "cover" }}
+                    className="img-fluid rounded-4"
+                    style={{
+                      height: "370px",
+                      objectFit: "cover",
+                      padding: "10px",
+                    }}
                   />
-                  <Card.Body>
+                  <Card.Body className="d-flex flex-column align-items-center">
                     <div className="d-flex justify-content-between align-items-start mb-2">
                       <Card.Title className="fw-bold fs-6 mb-0">
                         {store.name}
                       </Card.Title>
-                      <span className="badge bg-primary">{store.distance}</span>
                     </div>
                     <Card.Text className="small text-muted mb-3">
                       {store.address}
                     </Card.Text>
                     <div className="d-flex">
                       <Button
-                        variant="dark"
                         size="sm"
-                        className="me-2 rounded-0"
+                        className="me-2 rounded-4 px-4"
+                        style={{
+                          backgroundColor: "#003242",
+                        }}
                       >
                         Get Direction
-                      </Button>
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        className="rounded-0"
-                      >
-                        Call Store
                       </Button>
                     </div>
                   </Card.Body>
@@ -354,8 +395,11 @@ const HomePage = () => {
             <Col className="text-center">
               <Button
                 variant="primary"
-                className="rounded-pill px-4"
+                className="rounded-pill px-4 shadow-lg"
                 href="/Stores"
+                style={{
+                  backgroundColor: "#003242",
+                }}
               >
                 View All Locations
               </Button>

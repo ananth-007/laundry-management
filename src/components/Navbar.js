@@ -33,97 +33,118 @@ const Navbar = () => {
           <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
         </a>
 
-        {/* Mobile Toggle Button */}
+        {/* Navbar Items */}
+        <div
+          className="offcanvas offcanvas-end"
+          tabIndex="-1"
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+        >
+          <div className="offcanvas-header">
+            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
+              <a href="/GetStarted" className="navbar-brand">
+                <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
+              </a>
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="offcanvas-body">
+            <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li className="nav-item">
+                <a className="nav-link mx-lg-2" href="/HomePage">
+                  Home
+                </a>
+              </li>
+
+              {/* Services Dropdown */}
+              <li className="nav-item dropdown">
+                <button
+                  className="nav-link dropdown-toggle fw-regular btn"
+                  type="button"
+                  id="servicesDropdown"
+                  aria-expanded={isDropdownOpen}
+                  onClick={toggleDropdown}
+                  ref={dropdownRef}
+                >
+                  Services
+                </button>
+                <ul
+                  className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}
+                  aria-labelledby="servicesDropdown"
+                >
+                  <li>
+                    <a className="dropdown-item fw-regular" href="#">
+                      Wash & Fold
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item fw-regular" href="#">
+                      Wash & Iron
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item fw-regular" href="#">
+                      Steam Iron
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item fw-regular" href="#">
+                      Dry Cleaning
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link mx-lg-2" href="#">
+                  Prices
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link mx-lg-2" href="/Stores">
+                  Stores
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link mx-lg-2" href="#first-order">
+                  Schedule a pickup
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link mx-lg-2" href="#contact">
+                  Contact
+                </a>
+              </li>
+              {/* Profile Icon */}
+              <li className="nav-item">
+                <a href="#" className="profile-icon ms-3">
+                  <img
+                    src="profile.png"
+                    width="35px"
+                    height="35px"
+                    alt="Profile"
+                  />
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <button
-          className="navbar-toggler"
+          className="navbar-toggler pe-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded={isDropdownOpen}
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar"
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-
-        {/* Navbar Items */}
-        <div
-          className="collapse navbar-collapse d-flex justify-content-between align-items-center"
-          id="navbarNav"
-        >
-          <ul className="navbar-nav ms-auto d-flex align-items-center">
-            <li className="nav-item">
-              <a className="nav-link fw-bold" href="/HomePage">
-                Home
-              </a>
-            </li>
-
-            {/* Services Dropdown */}
-            <li className="nav-item dropdown">
-              <button
-                className="nav-link dropdown-toggle fw-bold btn"
-                type="button"
-                id="servicesDropdown"
-                aria-expanded={isDropdownOpen}
-                onClick={toggleDropdown}
-                ref={dropdownRef}
-              >
-                Services
-              </button>
-              <ul
-                className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}
-                aria-labelledby="servicesDropdown"
-              >
-                <li>
-                  <a className="dropdown-item fw-regular" href="#">
-                    Wash & Fold
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item fw-regular" href="#">
-                    Wash & Iron
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item fw-regular" href="#">
-                    Steam Iron
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item fw-regular" href="#">
-                    Dry Cleaning
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li className="nav-item">
-              <a className="nav-link fw-bold" href="#">
-                Prices
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link fw-bold" href="/Stores">
-                Stores
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link fw-bold" href="#">
-                Schedule a Pickup
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link fw-bold" href="#">
-                Contact
-              </a>
-            </li>
-          </ul>
-
-          {/* Profile Icon */}
-          <a href="#" className="profile-icon ms-3">
-            <img src="profile.png" width="35px" height="35px" alt="Profile" />
-          </a>
-        </div>
       </div>
     </nav>
   );
