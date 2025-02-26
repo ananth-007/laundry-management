@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import HomePage from "./pages/Home";
 import Stores from "./pages/Stores";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import PriceList from "./pages/Prices";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/Stores" element={<Stores />} />
+        <Route path="/PriceList" element={<PriceList />} />
       </Routes>
     </Router>
   );

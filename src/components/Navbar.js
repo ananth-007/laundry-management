@@ -101,7 +101,7 @@ const Navbar = () => {
               </li>
 
               <li className="nav-item">
-                <a className="nav-link mx-lg-2" href="#">
+                <a className="nav-link mx-lg-2" href="/PriceList">
                   Prices
                 </a>
               </li>
