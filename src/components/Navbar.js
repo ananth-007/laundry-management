@@ -26,7 +26,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg shadow-sm container-bg bg-info-subtle">
+    <nav className="navbar navbar-expand-lg container-bg bg-info-subtle">
       <div className="container">
         {/* Logo */}
         <a href="#" className="navbar-brand">
@@ -63,7 +63,7 @@ const Navbar = () => {
 
               {/* Services Dropdown */}
               <li className="nav-item dropdown">
-                <button
+                <a
                   className="nav-link dropdown-toggle fw-regular btn"
                   type="button"
                   id="servicesDropdown"
@@ -72,28 +72,45 @@ const Navbar = () => {
                   ref={dropdownRef}
                 >
                   Services
-                </button>
+                </a>
                 <ul
                   className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}
                   aria-labelledby="servicesDropdown"
+                  ref={dropdownRef}
                 >
                   <li>
-                    <a className="dropdown-item fw-regular" href="#">
+                    <a
+                      className="dropdown-item fw-regular"
+                      href="#"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
                       Wash & Fold
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item fw-regular" href="#">
+                    <a
+                      className="dropdown-item fw-regular"
+                      href="#"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
                       Wash & Iron
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item fw-regular" href="#">
+                    <a
+                      className="dropdown-item fw-regular"
+                      href="SteamIron"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
                       Steam Iron
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item fw-regular" href="#">
+                    <a
+                      className="dropdown-item fw-regular"
+                      href="/DryCleaning"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
                       Dry Cleaning
                     </a>
                   </li>

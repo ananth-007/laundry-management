@@ -6,8 +6,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import HomePage from "./pages/Home";
 import Stores from "./pages/Stores";
-import "bootstrap/dist/js/bootstrap.bundle.min";
 import PriceList from "./pages/Prices";
+import DryCleaning from "./pages/DryCleaning";
+import SteamIron from "./pages/SteamIron";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const App = () => {
   return (
@@ -20,6 +23,8 @@ const App = () => {
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/Stores" element={<Stores />} />
         <Route path="/PriceList" element={<PriceList />} />
+        <Route path="/DryCleaning" element={<DryCleaning />} />
+        <Route path="/SteamIron" element={<SteamIron />} />
       </Routes>
     </Router>
   );

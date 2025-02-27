@@ -19,22 +19,22 @@ const Footer = () => {
             <h5>Menu</h5>
             <ul className="list-unstyled mt-4">
               <li>
-                <a href="#" className="text-lght">
+                <a href="/HomePage" className="text-lght">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#" className="text-lght">
+                <a href="#service" className="text-lght">
                   Services
                 </a>
               </li>
               <li>
-                <a href="#" className="text-lght">
+                <a href="/PriceList" className="text-lght">
                   Prices
                 </a>
               </li>
               <li>
-                <a href="#" className="text-lght">
+                <a href="/Stores" className="text-lght">
                   Stores
                 </a>
               </li>
@@ -59,12 +59,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-lght">
+                <a href="/SteamIron" className="text-lght">
                   Steam Iron
                 </a>
               </li>
               <li>
-                <a href="#" className="text-lght">
+                <a href="/DryCleaning" className="text-lght">
                   Dry Cleaning
                 </a>
               </li>
@@ -74,7 +74,7 @@ const Footer = () => {
             <h5>About</h5>
             <ul className="list-unstyled mt-4">
               <li>
-                <a href="#" className="text-lght">
+                <a href="#contact" className="text-lght">
                   Contact Us
                 </a>
               </li>
