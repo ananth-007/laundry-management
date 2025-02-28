@@ -6,8 +6,12 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 import washFoldActive from "../assets/wash-fold-active.png";
+import washFoldInactive from "../assets/wash-fold-inactive.png";
+import washIronActive from "../assets/wash-iron-active.png";
 import washIronInactive from "../assets/wash-iron-inactive.png";
+import steamIronActive from "../assets/steam-iron-active.png";
 import steamIronInactive from "../assets/steam-iron-inactive.png";
+import dryCleanActive from "../assets/dry-cleaning-active.png";
 import dryCleanInactive from "../assets/dry-cleaning-inactive.png";
 
 // Import clothing item icons for men
@@ -49,6 +53,18 @@ import kurtaIconKids from "../assets/washFoldPrice/kurta-kids.png";
 import sweaterIconKids from "../assets/washFoldPrice/sweater-kids.png";
 import jumpsuitIconKids from "../assets/washFoldPrice/jumpsuit-kids.png";
 
+// Import clothing item icons for kids
+import bedSheetIcon from "../assets/washFoldPrice/bedsheet-household.png";
+import blanketIcon from "../assets/washFoldPrice/blanket-household.png";
+import curtainIcon from "../assets/washFoldPrice/curtain-household.png";
+import pillowCoverIcon from "../assets/washFoldPrice/pillow-cover-household.png";
+import duvetIcon from "../assets/washFoldPrice/duvet-household.png";
+import tableClothIcon from "../assets/washFoldPrice/table-cloth-household.png";
+import carpetIcon from "../assets/washFoldPrice/carpet-household.png";
+import cushionCoverIcon from "../assets/washFoldPrice/cushion-cover-household.png";
+import towelIcon from "../assets/washFoldPrice/towel-household.png";
+import sofaCoverIcon from "../assets/washFoldPrice/sofa-cover-household.png";
+
 function PriceList() {
   const [activeTab, setActiveTab] = useState("men");
   const [activeService, setActiveService] = useState("wash_fold");
@@ -56,94 +72,577 @@ function PriceList() {
   // Memoize service items to prevent re-creation on each render
   const serviceItems = useMemo(
     () => ({
-      men: [
-        {
-          name: "Half-Sleeve Shirt",
-          price: "₹25",
-          image: halfSleeveShirtIcon,
-        },
-        {
-          name: "Half-Sleeve T-Shirt",
-          price: "₹25",
-          image: halfSleeveTShirtIcon,
-        },
-        {
-          name: "Full-Sleeve T-Shirt",
-          price: "₹35",
-          image: fullSleeveTShirtIcon,
-        },
-        {
-          name: "Full-Sleeve Shirt",
-          price: "₹30",
-          image: fullSleeveShirtIcon,
-        },
-        { name: "Jacket", price: "₹140", image: jacketIcon },
-        {
-          name: "Flak Jacket",
-          price: "₹150",
-          image: flakJacketIcon,
-        },
-        { name: "Trousers", price: "₹40", image: trousersIcon },
-        { name: "Jeans", price: "₹50", image: jeansIcon },
-        { name: "Shorts", price: "₹25", image: shortsIcon },
-        { name: "Sweatshirt", price: "₹75", image: sweatshirtIcon },
-        { name: "Trackpant", price: "₹40", image: trackpantIcon },
-        { name: "Kurta", price: "₹40", image: kurtaIcon },
-      ],
-      women: [
-        {
-          name: "Half-Sleeve Shirt",
-          price: "₹25",
-          image: halfSleeveShirtIconWomen,
-        },
-        {
-          name: "Half-Sleeve T-Shirt",
-          price: "₹25",
-          image: halfSleeveTShirtIconWomen,
-        },
-        {
-          name: "Full-Sleeve T-Shirt",
-          price: "₹35",
-          image: fullSleeveTShirtIconWomen,
-        },
-        {
-          name: "Full-Sleeve Shirt",
-          price: "₹30",
-          image: fullSleeveShirtIconWomen,
-        },
-        { name: "Jacket", price: "₹140", image: jacketIconWomen },
-        {
-          name: "Bathrobe",
-          price: "₹75",
-          image: bathrobeIconWomen,
-        },
-        { name: "Trousers", price: "₹40", image: trousersIconWomen },
-        { name: "Jeggings", price: "₹50", image: jeggingsIconWomen },
-        { name: "Petticoat", price: "₹25", image: petticoatIconWomen },
-        { name: "Jumpsuit", price: "₹75", image: jumpsuitIconWomen },
-        { name: "Saree", price: "₹50", image: sareeIconWomen },
-        { name: "Night Gown", price: "₹50", image: nightGownIconWomen },
-      ],
-      kids: [
-        {
-          name: "Half-Sleeve Shirt",
-          price: "₹15",
-          image: halfSleeveShirtIconKids,
-        },
-        {
-          name: "Half-Sleeve T-Shirt",
-          price: "₹15",
-          image: halfSleeveTShirtIconKids,
-        },
-        { name: "Trousers", price: "₹20", image: trousersIconKids },
-        { name: "Jeans", price: "₹20", image: jeansIconKids },
-        { name: "Frock", price: "₹25", image: shortsIconKids },
-        { name: "Kurta", price: "₹15", image: kurtaIconKids },
-        { name: "Jumpsuit", price: "₹20", image: jumpsuitIconKids },
-        { name: "Sweater", price: "₹25", image: sweaterIconKids },
-        { name: "Shorts", price: "₹15", image: shortsIconKids },
-        { name: "Jacket", price: "₹100", image: jacketIconKids },
-      ],
+      wash_fold: {
+        men: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹25",
+            image: halfSleeveShirtIcon,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹25",
+            image: halfSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹35",
+            image: fullSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹30",
+            image: fullSleeveShirtIcon,
+          },
+          { name: "Jacket", price: "₹140", image: jacketIcon },
+          {
+            name: "Flak Jacket",
+            price: "₹150",
+            image: flakJacketIcon,
+          },
+          { name: "Trousers", price: "₹40", image: trousersIcon },
+          { name: "Jeans", price: "₹50", image: jeansIcon },
+          { name: "Shorts", price: "₹25", image: shortsIcon },
+          { name: "Sweatshirt", price: "₹75", image: sweatshirtIcon },
+          { name: "Trackpant", price: "₹40", image: trackpantIcon },
+          { name: "Kurta", price: "₹40", image: kurtaIcon },
+        ],
+        women: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹25",
+            image: halfSleeveShirtIconWomen,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹25",
+            image: halfSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹35",
+            image: fullSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹30",
+            image: fullSleeveShirtIconWomen,
+          },
+          { name: "Jacket", price: "₹140", image: jacketIconWomen },
+          {
+            name: "Bathrobe",
+            price: "₹75",
+            image: bathrobeIconWomen,
+          },
+          { name: "Trousers", price: "₹40", image: trousersIconWomen },
+          { name: "Jeggings", price: "₹50", image: jeggingsIconWomen },
+          { name: "Petticoat", price: "₹25", image: petticoatIconWomen },
+          { name: "Jumpsuit", price: "₹75", image: jumpsuitIconWomen },
+          { name: "Saree", price: "₹50", image: sareeIconWomen },
+          { name: "Night Gown", price: "₹50", image: nightGownIconWomen },
+        ],
+        kids: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹15",
+            image: halfSleeveShirtIconKids,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹15",
+            image: halfSleeveTShirtIconKids,
+          },
+          { name: "Trousers", price: "₹20", image: trousersIconKids },
+          { name: "Jeans", price: "₹20", image: jeansIconKids },
+          { name: "Frock", price: "₹25", image: shortsIconKids },
+          { name: "Kurta", price: "₹15", image: kurtaIconKids },
+          { name: "Jumpsuit", price: "₹20", image: jumpsuitIconKids },
+          { name: "Sweater", price: "₹25", image: sweaterIconKids },
+          { name: "Shorts", price: "₹15", image: shortsIconKids },
+          { name: "Jacket", price: "₹100", image: jacketIconKids },
+        ],
+        household: [
+          {
+            name: "Bed Sheet",
+            price: "₹50",
+            image: bedSheetIcon,
+          },
+          {
+            name: "Blanket",
+            price: "₹100",
+            image: blanketIcon,
+          },
+          {
+            name: "Curtain",
+            price: "₹40",
+            image: curtainIcon,
+          },
+          {
+            name: "Pillow Cover",
+            price: "₹20",
+            image: pillowCoverIcon,
+          },
+          {
+            name: "Duvet",
+            price: "₹120",
+            image: duvetIcon,
+          },
+          {
+            name: "Table Cloth",
+            price: "₹35",
+            image: tableClothIcon,
+          },
+          {
+            name: "Carpet",
+            price: "₹150",
+            image: carpetIcon,
+          },
+          {
+            name: "Cushion Cover",
+            price: "₹30",
+            image: cushionCoverIcon,
+          },
+          {
+            name: "Towel",
+            price: "₹25",
+            image: towelIcon,
+          },
+          {
+            name: "Sofa Cover",
+            price: "₹80",
+            image: sofaCoverIcon,
+          },
+        ],
+      },
+
+      wash_iron: {
+        men: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹40",
+            image: halfSleeveShirtIcon,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹40",
+            image: halfSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹50",
+            image: fullSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹50",
+            image: fullSleeveShirtIcon,
+          },
+          { name: "Jacket", price: "₹80", image: jacketIcon },
+          {
+            name: "Flak Jacket",
+            price: "₹80",
+            image: flakJacketIcon,
+          },
+          { name: "Trousers", price: "₹55", image: trousersIcon },
+          { name: "Jeans", price: "₹60", image: jeansIcon },
+          { name: "Shorts", price: "₹45", image: shortsIcon },
+          { name: "Sweatshirt", price: "₹100", image: sweatshirtIcon },
+          { name: "Trackpant", price: "₹60", image: trackpantIcon },
+          { name: "Kurta", price: "₹55", image: kurtaIcon },
+        ],
+        women: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹35",
+            image: halfSleeveShirtIconWomen,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹40",
+            image: halfSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹55",
+            image: fullSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹45",
+            image: fullSleeveShirtIconWomen,
+          },
+          { name: "Jacket", price: "₹175", image: jacketIconWomen },
+          {
+            name: "Bathrobe",
+            price: "₹90",
+            image: bathrobeIconWomen,
+          },
+          { name: "Trousers", price: "₹60", image: trousersIconWomen },
+          { name: "Jeggings", price: "₹70", image: jeggingsIconWomen },
+          { name: "Petticoat", price: "₹40", image: petticoatIconWomen },
+          { name: "Jumpsuit", price: "₹100", image: jumpsuitIconWomen },
+          { name: "Saree", price: "₹90", image: sareeIconWomen },
+          { name: "Night Gown", price: "₹60", image: nightGownIconWomen },
+        ],
+        kids: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹25",
+            image: halfSleeveShirtIconKids,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹25",
+            image: halfSleeveTShirtIconKids,
+          },
+          { name: "Trousers", price: "₹30", image: trousersIconKids },
+          { name: "Jeans", price: "₹30", image: jeansIconKids },
+          { name: "Frock", price: "₹40", image: shortsIconKids },
+          { name: "Kurta", price: "₹25", image: kurtaIconKids },
+          { name: "Jumpsuit", price: "₹30", image: jumpsuitIconKids },
+          { name: "Sweater", price: "₹45", image: sweaterIconKids },
+          { name: "Shorts", price: "₹25", image: shortsIconKids },
+          { name: "Jacket", price: "₹125", image: jacketIconKids },
+        ],
+        household: [
+          {
+            name: "Bed Sheet",
+            price: "₹60",
+            image: bedSheetIcon,
+          },
+          {
+            name: "Blanket",
+            price: "₹120",
+            image: blanketIcon,
+          },
+          {
+            name: "Curtain",
+            price: "₹50",
+            image: curtainIcon,
+          },
+          {
+            name: "Pillow Cover",
+            price: "₹30",
+            image: pillowCoverIcon,
+          },
+          {
+            name: "Duvet",
+            price: "₹130",
+            image: duvetIcon,
+          },
+          {
+            name: "Table Cloth",
+            price: "₹45",
+            image: tableClothIcon,
+          },
+          {
+            name: "Carpet",
+            price: "₹160",
+            image: carpetIcon,
+          },
+          {
+            name: "Cushion Cover",
+            price: "₹40",
+            image: cushionCoverIcon,
+          },
+          {
+            name: "Towel",
+            price: "₹35",
+            image: towelIcon,
+          },
+          {
+            name: "Sofa Cover",
+            price: "₹90",
+            image: sofaCoverIcon,
+          },
+        ],
+      },
+
+      steam_iron: {
+        men: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹20",
+            image: halfSleeveShirtIcon,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹20",
+            image: halfSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹25",
+            image: fullSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹20",
+            image: fullSleeveShirtIcon,
+          },
+          { name: "Jacket", price: "₹110", image: jacketIcon },
+          {
+            name: "Flak Jacket",
+            price: "₹100",
+            image: flakJacketIcon,
+          },
+          { name: "Trousers", price: "₹30", image: trousersIcon },
+          { name: "Jeans", price: "₹35", image: jeansIcon },
+          { name: "Shorts", price: "₹25", image: shortsIcon },
+          { name: "Sweatshirt", price: "₹75", image: sweatshirtIcon },
+          { name: "Trackpant", price: "₹40", image: trackpantIcon },
+          { name: "Kurta", price: "₹35", image: kurtaIcon },
+        ],
+        women: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹15",
+            image: halfSleeveShirtIconWomen,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹15",
+            image: halfSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹25",
+            image: fullSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹20",
+            image: fullSleeveShirtIconWomen,
+          },
+          { name: "Jacket", price: "₹150", image: jacketIconWomen },
+          {
+            name: "Bathrobe",
+            price: "₹70",
+            image: bathrobeIconWomen,
+          },
+          { name: "Trousers", price: "₹30", image: trousersIconWomen },
+          { name: "Jeggings", price: "₹40", image: jeggingsIconWomen },
+          { name: "Petticoat", price: "₹20", image: petticoatIconWomen },
+          { name: "Jumpsuit", price: "₹70", image: jumpsuitIconWomen },
+          { name: "Saree", price: "₹80", image: sareeIconWomen },
+          { name: "Night Gown", price: "₹40", image: nightGownIconWomen },
+        ],
+        kids: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹10",
+            image: halfSleeveShirtIconKids,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹10",
+            image: halfSleeveTShirtIconKids,
+          },
+          { name: "Trousers", price: "₹15", image: trousersIconKids },
+          { name: "Jeans", price: "₹15", image: jeansIconKids },
+          { name: "Frock", price: "₹20", image: shortsIconKids },
+          { name: "Kurta", price: "₹15", image: kurtaIconKids },
+          { name: "Jumpsuit", price: "₹15", image: jumpsuitIconKids },
+          { name: "Sweater", price: "₹25", image: sweaterIconKids },
+          { name: "Shorts", price: "₹15", image: shortsIconKids },
+          { name: "Jacket", price: "₹95", image: jacketIconKids },
+        ],
+        household: [
+          {
+            name: "Bed Sheet",
+            price: "₹40",
+            image: bedSheetIcon,
+          },
+          {
+            name: "Blanket",
+            price: "₹90",
+            image: blanketIcon,
+          },
+          {
+            name: "Curtain",
+            price: "₹30",
+            image: curtainIcon,
+          },
+          {
+            name: "Pillow Cover",
+            price: "₹20",
+            image: pillowCoverIcon,
+          },
+          {
+            name: "Duvet",
+            price: "₹110",
+            image: duvetIcon,
+          },
+          {
+            name: "Table Cloth",
+            price: "₹25",
+            image: tableClothIcon,
+          },
+          {
+            name: "Carpet",
+            price: "₹120",
+            image: carpetIcon,
+          },
+          {
+            name: "Cushion Cover",
+            price: "₹20",
+            image: cushionCoverIcon,
+          },
+          {
+            name: "Towel",
+            price: "₹20",
+            image: towelIcon,
+          },
+          {
+            name: "Sofa Cover",
+            price: "₹70",
+            image: sofaCoverIcon,
+          },
+        ],
+      },
+
+      dry_clean: {
+        men: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹75",
+            image: halfSleeveShirtIcon,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹75",
+            image: halfSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹85",
+            image: fullSleeveTShirtIcon,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹80",
+            image: fullSleeveShirtIcon,
+          },
+          { name: "Jacket", price: "₹300", image: jacketIcon },
+          {
+            name: "Flak Jacket",
+            price: "₹250",
+            image: flakJacketIcon,
+          },
+          { name: "Trousers", price: "₹140", image: trousersIcon },
+          { name: "Jeans", price: "₹150", image: jeansIcon },
+          { name: "Shorts", price: "₹125", image: shortsIcon },
+          { name: "Sweatshirt", price: "₹175", image: sweatshirtIcon },
+          { name: "Trackpant", price: "₹140", image: trackpantIcon },
+          { name: "Kurta", price: "₹300", image: kurtaIcon },
+        ],
+        women: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹85",
+            image: halfSleeveShirtIconWomen,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹85",
+            image: halfSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve T-Shirt",
+            price: "₹75",
+            image: fullSleeveTShirtIconWomen,
+          },
+          {
+            name: "Full-Sleeve Shirt",
+            price: "₹80",
+            image: fullSleeveShirtIconWomen,
+          },
+          { name: "Jacket", price: "₹300", image: jacketIconWomen },
+          {
+            name: "Bathrobe",
+            price: "₹125",
+            image: bathrobeIconWomen,
+          },
+          { name: "Trousers", price: "₹120", image: trousersIconWomen },
+          { name: "Jeggings", price: "₹150", image: jeggingsIconWomen },
+          { name: "Petticoat", price: "₹110", image: petticoatIconWomen },
+          { name: "Jumpsuit", price: "₹175", image: jumpsuitIconWomen },
+          { name: "Saree", price: "₹500", image: sareeIconWomen },
+          { name: "Night Gown", price: "₹250", image: nightGownIconWomen },
+        ],
+        kids: [
+          {
+            name: "Half-Sleeve Shirt",
+            price: "₹50",
+            image: halfSleeveShirtIconKids,
+          },
+          {
+            name: "Half-Sleeve T-Shirt",
+            price: "₹50",
+            image: halfSleeveTShirtIconKids,
+          },
+          { name: "Trousers", price: "₹60", image: trousersIconKids },
+          { name: "Jeans", price: "₹60", image: jeansIconKids },
+          { name: "Frock", price: "₹80", image: shortsIconKids },
+          { name: "Kurta", price: "₹150", image: kurtaIconKids },
+          { name: "Jumpsuit", price: "₹80", image: jumpsuitIconKids },
+          { name: "Sweater", price: "₹100", image: sweaterIconKids },
+          { name: "Shorts", price: "₹150", image: shortsIconKids },
+          { name: "Jacket", price: "₹200", image: jacketIconKids },
+        ],
+        household: [
+          {
+            name: "Bed Sheet",
+            price: "₹150",
+            image: bedSheetIcon,
+          },
+          {
+            name: "Blanket",
+            price: "₹200",
+            image: blanketIcon,
+          },
+          {
+            name: "Curtain",
+            price: "₹240",
+            image: curtainIcon,
+          },
+          {
+            name: "Pillow Cover",
+            price: "₹80",
+            image: pillowCoverIcon,
+          },
+          {
+            name: "Duvet",
+            price: "₹250",
+            image: duvetIcon,
+          },
+          {
+            name: "Table Cloth",
+            price: "₹150",
+            image: tableClothIcon,
+          },
+          {
+            name: "Carpet",
+            price: "₹250",
+            image: carpetIcon,
+          },
+          {
+            name: "Cushion Cover",
+            price: "₹90",
+            image: cushionCoverIcon,
+          },
+          {
+            name: "Towel",
+            price: "₹60",
+            image: towelIcon,
+          },
+          {
+            name: "Sofa Cover",
+            price: "₹280",
+            image: sofaCoverIcon,
+          },
+        ],
+      },
     }),
     []
   );
@@ -151,10 +650,30 @@ function PriceList() {
   // Memoize laundry services
   const laundryServices = useMemo(
     () => [
-      { id: "wash_fold", name: "WASH + FOLD", image: washFoldActive },
-      { id: "wash_iron", name: "WASH + IRON", image: washIronInactive },
-      { id: "steam_iron", name: "STEAM IRON", image: steamIronInactive },
-      { id: "dry_clean", name: "DRY CLEAN", image: dryCleanInactive },
+      {
+        id: "wash_fold",
+        name: "WASH + FOLD",
+        activeImage: washFoldActive,
+        inactiveImage: washFoldInactive,
+      },
+      {
+        id: "wash_iron",
+        name: "WASH + IRON",
+        activeImage: washIronActive,
+        inactiveImage: washIronInactive,
+      },
+      {
+        id: "steam_iron",
+        name: "STEAM IRON",
+        activeImage: steamIronActive,
+        inactiveImage: steamIronInactive,
+      },
+      {
+        id: "dry_clean",
+        name: "DRY CLEAN",
+        activeImage: dryCleanActive,
+        inactiveImage: dryCleanInactive,
+      },
     ],
     []
   );
@@ -170,7 +689,7 @@ function PriceList() {
       <Navbar />
 
       <div className="d-flex flex-column min-vh-100">
-        <div className="bg-info bg-opacity-25 py-5">
+        <div className="bg-info-subtle bg-opacity-25 py-5">
           <Container className="text-center">
             <h1 className="fw-bold">Pricelist</h1>
           </Container>
@@ -183,40 +702,49 @@ function PriceList() {
               <Card className="mb-4 border-0 rounded-4">
                 <div
                   className="text-dark rounded-4"
-                  style={{ backgroundColor: "#003242" }}
+                  style={{ backgroundColor: "#003242", overflow: "hidden" }}
                 >
-                  {laundryServices.map((service) => (
-                    <div
-                      key={service.id}
-                      className={`d-flex align-items-center p-3 border-bottom border-light ${
-                        activeService === service.id
-                          ? "bg-info bg-opacity-25"
-                          : ""
-                      }`}
-                      style={{
-                        cursor: "pointer",
-                        backgroundColor: "#bce3fa",
-                      }}
-                      onClick={() => handleServiceClick(service.id)}
-                    >
-                      <div className="me-3">
-                        <img
-                          src={service.image}
-                          alt={service.name}
-                          loading="lazy"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            objectFit: "contain",
-                          }}
-                          onError={(e) =>
-                            (e.target.src = "/images/placeholder.png")
-                          }
-                        />
+                  {laundryServices.map((service) => {
+                    const isActive = activeService === service.id;
+                    return (
+                      <div
+                        key={service.id}
+                        className={`d-flex align-items-center p-3 border-bottom border-light`}
+                        style={{
+                          cursor: "pointer",
+                          backgroundColor: isActive ? "#003242" : "#bce3fa",
+                          overflow: "hidden",
+                        }}
+                        onClick={() => handleServiceClick(service.id)}
+                      >
+                        <div className="me-3">
+                          <img
+                            src={
+                              isActive
+                                ? service.activeImage
+                                : service.inactiveImage
+                            }
+                            alt={service.name}
+                            loading="lazy"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              objectFit: "contain",
+                            }}
+                            onError={(e) =>
+                              (e.target.src = "/images/placeholder.png")
+                            }
+                          />
+                        </div>
+                        <div
+                          className="fw-bold"
+                          style={{ color: isActive ? "#FFFFFF" : "#000000" }}
+                        >
+                          {service.name}
+                        </div>
                       </div>
-                      <div className="fw-bold">{service.name}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Card>
             </Col>
@@ -225,7 +753,7 @@ function PriceList() {
             <Col md={8} className="d-flex flex-column align-items-start">
               {/* Category Tabs */}
               <div className="mb-4">
-                {["men", "women", "kids"].map((category) => (
+                {["men", "women", "kids", "household"].map((category) => (
                   <Button
                     key={category}
                     variant={activeTab === category ? "dark" : "outline-dark"}
@@ -239,7 +767,7 @@ function PriceList() {
 
               {/* Items Grid */}
               <Row>
-                {serviceItems[activeTab].map((item, index) => (
+                {serviceItems[activeService][activeTab].map((item, index) => (
                   <Col md={4} key={index} className="mb-4">
                     <Card className="h-100 border rounded-4 shadow-sm">
                       <Card.Body className="d-flex flex-column align-items-center p-4">

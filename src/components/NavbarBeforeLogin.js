@@ -6,7 +6,7 @@ import logo from "../assets/logo.png";
 const NavbarBeforeLogin = () => {
   return (
     <div className="nav-bg">
-      <nav className="navbar navbar-expand-lg shadow-sm container-bg bg-info-subtle">
+      <nav className="navbar navbar-expand-lg container-bg bg-info-subtle">
         <div className="container">
           {/* Logo */}
           <a href="/GetStarted" className="navbar-brand">

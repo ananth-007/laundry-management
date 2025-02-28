@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import logo from "../assets/logo.png";
 import "./Navbar.css";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -25,11 +26,22 @@ const Navbar = () => {
     };
   }, []);
 
+  const location = useLocation();
+
+  const handleContactClick = (e) => {
+    if (location.pathname === "/" || location.pathname === "/HomePage") {
+      // Do nothing, let the anchor tag work normally
+    } else {
+      e.preventDefault();
+      window.location.href = "/HomePage#contact";
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg container-bg bg-info-subtle">
       <div className="container">
         {/* Logo */}
-        <a href="#" className="navbar-brand">
+        <a href="/HomePage" className="navbar-brand">
           <img src={logo} className="img-fluid logo pd-0" alt="Logo" />
         </a>
 
@@ -99,7 +111,7 @@ const Navbar = () => {
                   <li>
                     <a
                       className="dropdown-item fw-regular"
-                      href="SteamIron"
+                      href="/SteamIron"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       Steam Iron
@@ -133,7 +145,11 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link mx-lg-2" href="#contact">
+                <a
+                  className="nav-link mx-lg-2"
+                  href="/HomePage#contact"
+                  onClick={handleContactClick}
+                >
                   Contact
                 </a>
               </li>
