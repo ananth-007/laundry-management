@@ -9,6 +9,8 @@ import Stores from "./pages/Stores";
 import PriceList from "./pages/Prices";
 import DryCleaning from "./pages/DryCleaning";
 import SteamIron from "./pages/SteamIron";
+import WashFold from "./pages/Wash-Fold";
+import WashIron from "./pages/Wash-Iron";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/PriceList" element={<PriceList />} />
         <Route path="/DryCleaning" element={<DryCleaning />} />
         <Route path="/SteamIron" element={<SteamIron />} />
+        <Route path="/WashFold" element={<WashFold />} />
+        <Route path="/WashIron" element={<WashIron />} />
       </Routes>
     </Router>
   );

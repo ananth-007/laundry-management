@@ -93,7 +93,7 @@ const Navbar = () => {
                   <li>
                     <a
                       className="dropdown-item fw-regular"
-                      href="#"
+                      href="/WashFold"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       Wash & Fold
@@ -102,7 +102,7 @@ const Navbar = () => {
                   <li>
                     <a
                       className="dropdown-item fw-regular"
-                      href="#"
+                      href="/WashIron"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       Wash & Iron
