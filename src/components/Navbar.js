@@ -140,7 +140,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link mx-lg-2" href="#first-order">
+                <a className="nav-link mx-lg-2" href="/SchedulePickup">
                   Schedule a pickup
                 </a>
               </li>

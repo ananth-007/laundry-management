@@ -11,6 +11,7 @@ import DryCleaning from "./pages/DryCleaning";
 import SteamIron from "./pages/SteamIron";
 import WashFold from "./pages/Wash-Fold";
 import WashIron from "./pages/Wash-Iron";
+import SchedulePickup from "./pages/SchedulePickup";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/SteamIron" element={<SteamIron />} />
         <Route path="/WashFold" element={<WashFold />} />
         <Route path="/WashIron" element={<WashIron />} />
+        <Route path="/SchedulePickup" element={<SchedulePickup />} />
       </Routes>
     </Router>
   );
