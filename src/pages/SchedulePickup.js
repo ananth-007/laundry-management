@@ -386,7 +386,7 @@ const SchedulePickup = () => {
                       <span>(${getCurrentPrice(section, item.name)})</span>
                     )}
                   </Form.Label>
-                  <div className="input-group" style={{ width: "120px" }}>
+                  <div className="input-group" style={{ width: "130px" }}>
                     <Button
                       variant="outline-secondary"
                       onClick={() => {
@@ -410,7 +410,7 @@ const SchedulePickup = () => {
                       }}
                       min="0"
                       className="text-center"
-                      style={{ maxWidth: "50px" }}
+                      style={{ maxWidth: "60px" }}
                     />
                     <Button
                       variant="outline-secondary"

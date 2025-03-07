@@ -155,7 +155,7 @@ const Navbar = () => {
               </li>
               {/* Profile Icon */}
               <li className="nav-item">
-                <a href="#" className="profile-icon ms-3">
+                <a href="/ProfilePage" className="profile-icon ms-3">
                   <img
                     src="profile.png"
                     width="35px"
