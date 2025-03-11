@@ -112,13 +112,13 @@ const ProfilePage = () => {
                 <FaStore className="me-3" size={20} /> Stores
               </Nav.Link>
               <Nav.Link
-                href="#"
+                href="/OrderStatus"
                 className="p-3 d-flex align-items-center text-dark"
               >
                 <FaClipboardList className="me-3" size={20} /> Orders
               </Nav.Link>
               <Nav.Link
-                href="#"
+                href="/HistoryPage"
                 className="p-3 d-flex align-items-center text-dark"
               >
                 <FaHistory className="me-3" size={20} /> History

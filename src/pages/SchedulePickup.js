@@ -28,9 +28,36 @@ const SchedulePickup = () => {
   const clothingTypes = {
     men: [
       {
-        name: "Shirt",
+        name: "Half-Sleeve Shirt",
         prices: {
-          "Wash & Fold": 4,
+          "Wash & Fold": 25,
+          "Wash & Iron": 6,
+          "Steam Iron": 3,
+          "Dry Cleaning": 8,
+        },
+      },
+      {
+        name: "Half-Sleeve T-Shirt",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 6,
+          "Steam Iron": 3,
+          "Dry Cleaning": 8,
+        },
+      },
+      {
+        name: "Full-Sleeve T-Shirt",
+        prices: {
+          "Wash & Fold": 35,
+          "Wash & Iron": 6,
+          "Steam Iron": 3,
+          "Dry Cleaning": 8,
+        },
+      },
+      {
+        name: "Half-Sleeve Shirt",
+        prices: {
+          "Wash & Fold": 30,
           "Wash & Iron": 6,
           "Steam Iron": 3,
           "Dry Cleaning": 8,

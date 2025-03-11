@@ -13,6 +13,8 @@ import WashFold from "./pages/Wash-Fold";
 import WashIron from "./pages/Wash-Iron";
 import SchedulePickup from "./pages/SchedulePickup";
 import ProfilePage from "./pages/Profile";
+import OrderStatus from "./pages/OrderStatus";
+import HistoryPage from "./pages/HistoryPage";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -33,6 +35,8 @@ const App = () => {
         <Route path="/WashIron" element={<WashIron />} />
         <Route path="/SchedulePickup" element={<SchedulePickup />} />
         <Route path="/ProfilePage" element={<ProfilePage />} />
+        <Route path="/OrderStatus" element={<OrderStatus />} />
+        <Route path="/HistoryPage" element={<HistoryPage />} />
       </Routes>
     </Router>
   );
