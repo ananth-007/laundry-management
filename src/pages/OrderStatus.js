@@ -202,7 +202,7 @@ const OrderStatus = () => {
       const updateRemainingTime = () => {
         const diff = estimatedDeliveryTime - new Date();
         if (diff > 0) {
-          const hours = Math.floor(diff / (1000 * 60 * 60));
+          const hours = Math.floor(diff / (6000 * 60 * 60));
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           setRemainingTime({ hours, minutes });
         }
