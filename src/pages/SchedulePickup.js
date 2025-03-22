@@ -19,225 +19,416 @@ import {
   Col,
   Card,
   Modal,
+  Alert,
 } from "react-bootstrap";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import axios from "axios";
+import { FaRupeeSign } from "react-icons/fa";
 
 const SchedulePickup = () => {
-  // Modified pricing structure to include different prices for each service type
   const clothingTypes = {
     men: [
       {
         name: "Half-Sleeve Shirt",
         prices: {
           "Wash & Fold": 25,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 75,
         },
       },
       {
         name: "Half-Sleeve T-Shirt",
         prices: {
           "Wash & Fold": 25,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 75,
         },
       },
       {
         name: "Full-Sleeve T-Shirt",
         prices: {
-          "Wash & Fold": 35,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 75,
         },
       },
       {
-        name: "Half-Sleeve Shirt",
+        name: "Full-Sleeve Shirt",
         prices: {
           "Wash & Fold": 30,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
-        },
-      },
-      {
-        name: "Pants",
-        prices: {
-          "Wash & Fold": 5,
-          "Wash & Iron": 7,
-          "Steam Iron": 4,
-          "Dry Cleaning": 10,
-        },
-      },
-      {
-        name: "T-Shirt",
-        prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 5,
-          "Steam Iron": 2,
-          "Dry Cleaning": 7,
-        },
-      },
-      {
-        name: "Suit",
-        prices: {
-          "Wash & Fold": 8,
-          "Wash & Iron": 12,
-          "Steam Iron": 7,
-          "Dry Cleaning": 15,
-        },
-      },
-      {
-        name: "Shorts",
-        prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 5,
-          "Steam Iron": 2,
-          "Dry Cleaning": 6,
-        },
-      },
-    ],
-    women: [
-      {
-        name: "Blouse",
-        prices: {
-          "Wash & Fold": 4,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
-        },
-      },
-      {
-        name: "Dress",
-        prices: {
-          "Wash & Fold": 7,
-          "Wash & Iron": 9,
-          "Steam Iron": 5,
-          "Dry Cleaning": 12,
-        },
-      },
-      {
-        name: "Skirt",
-        prices: {
-          "Wash & Fold": 5,
-          "Wash & Iron": 7,
-          "Steam Iron": 4,
-          "Dry Cleaning": 9,
+          "Wash & Iron": 50,
+          "Steam Iron": 20,
+          "Dry Cleaning": 80,
         },
       },
       {
         name: "Jacket",
         prices: {
-          "Wash & Fold": 6,
-          "Wash & Iron": 8,
-          "Steam Iron": 5,
-          "Dry Cleaning": 11,
+          "Wash & Fold": 140,
+          "Wash & Iron": 80,
+          "Steam Iron": 110,
+          "Dry Cleaning": 300,
         },
       },
       {
-        name: "Leggings",
+        name: "Flak Jacket",
         prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 5,
-          "Steam Iron": 2,
-          "Dry Cleaning": 7,
+          "Wash & Fold": 150,
+          "Wash & Iron": 80,
+          "Steam Iron": 100,
+          "Dry Cleaning": 250,
+        },
+      },
+      {
+        name: "Trousers",
+        prices: {
+          "Wash & Fold": 40,
+          "Wash & Iron": 55,
+          "Steam Iron": 30,
+          "Dry Cleaning": 140,
+        },
+      },
+      {
+        name: "Jeans",
+        prices: {
+          "Wash & Fold": 50,
+          "Wash & Iron": 60,
+          "Steam Iron": 35,
+          "Dry Cleaning": 150,
+        },
+      },
+      {
+        name: "Shorts",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 45,
+          "Steam Iron": 25,
+          "Dry Cleaning": 125,
+        },
+      },
+      {
+        name: "Sweatshirt",
+        prices: {
+          "Wash & Fold": 75,
+          "Wash & Iron": 100,
+          "Steam Iron": 75,
+          "Dry Cleaning": 175,
+        },
+      },
+      {
+        name: "Trackpant",
+        prices: {
+          "Wash & Fold": 40,
+          "Wash & Iron": 60,
+          "Steam Iron": 40,
+          "Dry Cleaning": 140,
+        },
+      },
+      {
+        name: "Kurta",
+        prices: {
+          "Wash & Fold": 40,
+          "Wash & Iron": 55,
+          "Steam Iron": 25,
+          "Dry Cleaning": 125,
+        },
+      },
+    ],
+    women: [
+      {
+        name: "Half-Sleeve Shirt",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 85,
+        },
+      },
+      {
+        name: "Half-Sleeve T-Shirt",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 15,
+          "Dry Cleaning": 85,
+        },
+      },
+      {
+        name: "Full-Sleeve T-Shirt",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 75,
+        },
+      },
+      {
+        name: "Full-Sleeve Shirt",
+        prices: {
+          "Wash & Fold": 30,
+          "Wash & Iron": 50,
+          "Steam Iron": 20,
+          "Dry Cleaning": 80,
+        },
+      },
+      {
+        name: "Jacket",
+        prices: {
+          "Wash & Fold": 140,
+          "Wash & Iron": 175,
+          "Steam Iron": 150,
+          "Dry Cleaning": 300,
+        },
+      },
+      {
+        name: "Bathrobe",
+        prices: {
+          "Wash & Fold": 75,
+          "Wash & Iron": 90,
+          "Steam Iron": 70,
+          "Dry Cleaning": 125,
+        },
+      },
+      {
+        name: "Trousers",
+        prices: {
+          "Wash & Fold": 40,
+          "Wash & Iron": 60,
+          "Steam Iron": 30,
+          "Dry Cleaning": 120,
+        },
+      },
+      {
+        name: "Jeggings",
+        prices: {
+          "Wash & Fold": 50,
+          "Wash & Iron": 70,
+          "Steam Iron": 40,
+          "Dry Cleaning": 150,
+        },
+      },
+      {
+        name: "Petticoat",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 110,
+        },
+      },
+      {
+        name: "Jumpsuit",
+        prices: {
+          "Wash & Fold": 75,
+          "Wash & Iron": 100,
+          "Steam Iron": 70,
+          "Dry Cleaning": 175,
+        },
+      },
+      {
+        name: "Saree",
+        prices: {
+          "Wash & Fold": 50,
+          "Wash & Iron": 90,
+          "Steam Iron": 80,
+          "Dry Cleaning": 500,
+        },
+      },
+      {
+        name: "Night Gown",
+        prices: {
+          "Wash & Fold": 50,
+          "Wash & Iron": 60,
+          "Steam Iron": 40,
+          "Dry Cleaning": 250,
         },
       },
     ],
     kids: [
       {
-        name: "Kids Shirt",
+        name: "Half-Sleeve Shirt",
         prices: {
-          "Wash & Fold": 2,
-          "Wash & Iron": 4,
-          "Steam Iron": 2,
-          "Dry Cleaning": 5,
+          "Wash & Fold": 15,
+          "Wash & Iron": 25,
+          "Steam Iron": 10,
+          "Dry Cleaning": 50,
         },
       },
       {
-        name: "Kids Pants",
+        name: "Half-Sleeve T-Shirt",
         prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 5,
-          "Steam Iron": 2,
-          "Dry Cleaning": 6,
+          "Wash & Fold": 15,
+          "Wash & Iron": 25,
+          "Steam Iron": 10,
+          "Dry Cleaning": 50,
         },
       },
       {
-        name: "Romper",
+        name: "Trousers",
         prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 5,
-          "Steam Iron": 2,
-          "Dry Cleaning": 6,
+          "Wash & Fold": 20,
+          "Wash & Iron": 30,
+          "Steam Iron": 15,
+          "Dry Cleaning": 60,
         },
       },
       {
-        name: "Kids Jacket",
+        name: "Jeans",
         prices: {
-          "Wash & Fold": 4,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 7,
+          "Wash & Fold": 20,
+          "Wash & Iron": 30,
+          "Steam Iron": 15,
+          "Dry Cleaning": 60,
         },
       },
       {
-        name: "Kids Dress",
+        name: "Frock",
         prices: {
-          "Wash & Fold": 4,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
+          "Wash & Fold": 25,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 80,
+        },
+      },
+      {
+        name: "Kurta",
+        prices: {
+          "Wash & Fold": 15,
+          "Wash & Iron": 25,
+          "Steam Iron": 15,
+          "Dry Cleaning": 150,
+        },
+      },
+      {
+        name: "Jumpsuit",
+        prices: {
+          "Wash & Fold": 20,
+          "Wash & Iron": 30,
+          "Steam Iron": 15,
+          "Dry Cleaning": 80,
+        },
+      },
+      {
+        name: "Sweater",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 45,
+          "Steam Iron": 25,
+          "Dry Cleaning": 100,
+        },
+      },
+      {
+        name: "Shorts",
+        prices: {
+          "Wash & Fold": 15,
+          "Wash & Iron": 25,
+          "Steam Iron": 15,
+          "Dry Cleaning": 150,
+        },
+      },
+      {
+        name: "Jacket",
+        prices: {
+          "Wash & Fold": 100,
+          "Wash & Iron": 125,
+          "Steam Iron": 95,
+          "Dry Cleaning": 200,
         },
       },
     ],
     household: [
       {
-        name: "Towel",
-        prices: {
-          "Wash & Fold": 3,
-          "Wash & Iron": 4,
-          "Steam Iron": 2,
-          "Dry Cleaning": 5,
-        },
-      },
-      {
         name: "Bedsheet",
         prices: {
-          "Wash & Fold": 5,
-          "Wash & Iron": 7,
-          "Steam Iron": 4,
-          "Dry Cleaning": 9,
+          "Wash & Fold": 50,
+          "Wash & Iron": 60,
+          "Steam Iron": 40,
+          "Dry Cleaning": 150,
         },
       },
       {
         name: "Blanket",
         prices: {
-          "Wash & Fold": 7,
-          "Wash & Iron": 10,
-          "Steam Iron": 6,
-          "Dry Cleaning": 12,
+          "Wash & Fold": 100,
+          "Wash & Iron": 120,
+          "Steam Iron": 90,
+          "Dry Cleaning": 200,
         },
       },
       {
         name: "Curtain",
         prices: {
-          "Wash & Fold": 4,
-          "Wash & Iron": 6,
-          "Steam Iron": 3,
-          "Dry Cleaning": 8,
+          "Wash & Fold": 40,
+          "Wash & Iron": 50,
+          "Steam Iron": 30,
+          "Dry Cleaning": 240,
         },
       },
       {
         name: "Pillow Cover",
         prices: {
-          "Wash & Fold": 2,
-          "Wash & Iron": 4,
-          "Steam Iron": 2,
-          "Dry Cleaning": 5,
+          "Wash & Fold": 20,
+          "Wash & Iron": 30,
+          "Steam Iron": 20,
+          "Dry Cleaning": 80,
+        },
+      },
+      {
+        name: "Duvet",
+        prices: {
+          "Wash & Fold": 120,
+          "Wash & Iron": 130,
+          "Steam Iron": 110,
+          "Dry Cleaning": 250,
+        },
+      },
+      {
+        name: "Table Cloth",
+        prices: {
+          "Wash & Fold": 35,
+          "Wash & Iron": 45,
+          "Steam Iron": 25,
+          "Dry Cleaning": 150,
+        },
+      },
+      {
+        name: "Carpet",
+        prices: {
+          "Wash & Fold": 150,
+          "Wash & Iron": 160,
+          "Steam Iron": 120,
+          "Dry Cleaning": 250,
+        },
+      },
+      {
+        name: "Cushion Cover",
+        prices: {
+          "Wash & Fold": 30,
+          "Wash & Iron": 40,
+          "Steam Iron": 20,
+          "Dry Cleaning": 90,
+        },
+      },
+      {
+        name: "Towel",
+        prices: {
+          "Wash & Fold": 25,
+          "Wash & Iron": 35,
+          "Steam Iron": 20,
+          "Dry Cleaning": 60,
+        },
+      },
+      {
+        name: "Sofa Cover",
+        prices: {
+          "Wash & Fold": 80,
+          "Wash & Iron": 90,
+          "Steam Iron": 70,
+          "Dry Cleaning": 280,
         },
       },
     ],
@@ -263,6 +454,12 @@ const SchedulePickup = () => {
   const [clothingItem, setClothingItem] = useState("");
   const [errors, setErrors] = useState({});
   const [showPriceModal, setShowPriceModal] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState({
+    show: false,
+    type: "",
+    message: "",
+    orderId: "",
+  });
 
   // Memoized store and service options
   const storeOptions = useMemo(
@@ -371,8 +568,6 @@ const SchedulePickup = () => {
 
   // Calculate total price
   const calculateTotalPrice = useMemo(() => {
-    // No base service price since it's included in individual items
-
     // Calculate price for each section
     const sectionPrices = Object.entries(formData.clothingItems).reduce(
       (total, [section, items]) => {
@@ -410,7 +605,7 @@ const SchedulePickup = () => {
                   <Form.Label className="me-2 mb-0 flex-grow-1">
                     {item.name}{" "}
                     {formData.serviceType && (
-                      <span>(${getCurrentPrice(section, item.name)})</span>
+                      <span>(₹{getCurrentPrice(section, item.name)})</span>
                     )}
                   </Form.Label>
                   <div className="input-group" style={{ width: "130px" }}>
@@ -475,19 +670,37 @@ const SchedulePickup = () => {
   // Updated validation function
   const validateForm = useCallback(() => {
     const newErrors = {};
-    if (!formData.store) newErrors.store = "Please select a store";
+    if (!formData.store) newErrors.store = "Store selection is required.";
+
     if (!formData.serviceType)
-      newErrors.serviceType = "Please select a service type";
+      newErrors.serviceType = "Service type selection is required.";
+
     if (!formData.pickupAddress)
-      newErrors.pickupAddress = "Pickup address is required";
-    if (!formData.pickupDate) newErrors.pickupDate = "Pickup date is required";
-    if (!formData.pickupTime) newErrors.pickupTime = "Pickup time is required";
+      newErrors.pickupAddress = "Please provide a pickup address.";
+
+    if (!formData.pickupDate)
+      newErrors.pickupDate = "Please select a pickup date.";
+
+    if (!formData.pickupTime)
+      newErrors.pickupTime = "Please select a pickup time.";
+
     if (!formData.deliveryAddress)
-      newErrors.deliveryAddress = "Delivery address is required";
+      newErrors.deliveryAddress = "Please provide a delivery address.";
+
     if (!formData.deliveryDate)
-      newErrors.deliveryDate = "Delivery date is required";
+      newErrors.deliveryDate = "Please select a delivery date.";
+
     if (!formData.deliveryTime)
-      newErrors.deliveryTime = "Delivery time is required";
+      newErrors.deliveryTime = "Please select a delivery time.";
+
+    // Check if we have any clothing items selected
+    const hasItems = Object.values(formData.clothingItems).some((section) =>
+      Object.values(section).some((count) => count > 0)
+    );
+
+    if (!hasItems) {
+      newErrors.clothingItems = "Please select at least one item";
+    }
 
     // Check if we have all required date and time fields before validation
     if (
@@ -546,18 +759,98 @@ const SchedulePickup = () => {
   }, []);
 
   // Handle form submission
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (validateForm()) {
-      // Simulate payment redirection or API call
-      alert(`Total Price: $${calculateTotalPrice}\nProceeding to Payment...`);
+      try {
+        // Format dates for backend (YYYY-MM-DD format)
+        const pickupDate = formData.pickupDate;
+        const deliveryDate = formData.deliveryDate;
+
+        // Prepare the payload according to Spring Boot DTO structure
+        const payload = {
+          store: formData.store,
+          serviceType: formData.serviceType,
+          clothingItems: formData.clothingItems,
+          pickupAddress: formData.pickupAddress,
+          pickupDate: pickupDate,
+          pickupTime: formData.pickupTime,
+          deliveryAddress: formData.deliveryAddress,
+          deliveryDate: deliveryDate,
+          deliveryTime: formData.deliveryTime,
+          totalPrice: calculateTotalPrice,
+        };
+
+        // Make API call to Spring Boot backend
+        const response = await axios.post(`/api/pickups/schedule`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        // Handle successful response
+        if (response.status === 201) {
+          setSubmitStatus({
+            show: true,
+            type: "success",
+            message: "Pickup scheduled successfully!",
+            orderId: response.data.orderId,
+          });
+
+          // Reset form after successful submission
+          setFormData({
+            store: "",
+            serviceType: "",
+            clothingItems: {
+              men: {},
+              women: {},
+              kids: {},
+              household: {},
+            },
+            pickupAddress: "",
+            pickupDate: "",
+            pickupTime: "",
+            deliveryAddress: "",
+            deliveryDate: "",
+            deliveryTime: "",
+          });
+        }
+      } catch (error) {
+        console.error("Error scheduling pickup:", error);
+        setSubmitStatus({
+          show: true,
+          type: "danger",
+          message: `Failed to schedule pickup: ${
+            error.response?.data?.message || error.message
+          }`,
+          orderId: "",
+        });
+      }
     }
-  }, [validateForm, calculateTotalPrice]);
+  }, [validateForm, formData, calculateTotalPrice]);
 
   return (
     <div>
       <Navbar />
 
       <Container className="mt-4 mb-4">
+        {/* Status Alert */}
+        {submitStatus.show && (
+          <Alert
+            variant={submitStatus.type}
+            onClose={() => setSubmitStatus({ ...submitStatus, show: false })}
+            dismissible
+          >
+            <Alert.Heading>
+              {submitStatus.type === "success" ? "Success!" : "Error!"}
+            </Alert.Heading>
+            <p>{submitStatus.message}</p>
+            {submitStatus.orderId && (
+              <p className="mb-0">
+                <strong>Order ID:</strong> {submitStatus.orderId}
+              </p>
+            )}
+          </Alert>
+        )}
         <Card className="shadow">
           <Card.Header className="bg-info-subtle text-dark text-center">
             <h3 className="mb-0 d-flex justify-content-center align-items-center">
@@ -572,10 +865,11 @@ const SchedulePickup = () => {
                   <Form.Label>Select Store</Form.Label>
                   <Form.Select
                     name="store"
+                    value={formData.store}
                     onChange={handleChange}
                     isInvalid={!!errors.store}
                   >
-                    <option>Choose a Store</option>
+                    <option value="">Choose a Store</option>
                     {storeOptions.map((store) => (
                       <option key={store.value} value={store.value}>
                         {store.label}
@@ -592,10 +886,11 @@ const SchedulePickup = () => {
                   <Form.Label>Service Type</Form.Label>
                   <Form.Select
                     name="serviceType"
+                    value={formData.serviceType}
                     onChange={handleChange}
                     isInvalid={!!errors.serviceType}
                   >
-                    <option>Choose Service</option>
+                    <option value="">Choose Service</option>
                     {serviceOptions.map((service) => (
                       <option key={service.value} value={service.value}>
                         {service.label}
@@ -614,6 +909,11 @@ const SchedulePickup = () => {
               </Col>
             </Row>
 
+            {/* Error for no items selected */}
+            {errors.clothingItems && (
+              <Alert variant="danger">{errors.clothingItems}</Alert>
+            )}
+
             {/* Clothing Sections */}
             {renderClothingSection("men", ShirtIcon)}
             {renderClothingSection("women", ShoppingBagIcon)}
@@ -628,6 +928,7 @@ const SchedulePickup = () => {
                   <Form.Control
                     type="text"
                     name="pickupAddress"
+                    value={formData.pickupAddress}
                     onChange={handleChange}
                     placeholder="Enter pickup address"
                     isInvalid={!!errors.pickupAddress}
@@ -643,6 +944,7 @@ const SchedulePickup = () => {
                   <Form.Control
                     type="date"
                     name="pickupDate"
+                    value={formData.pickupDate}
                     onChange={handleChange}
                     isInvalid={!!errors.pickupDate}
                   />
@@ -656,10 +958,11 @@ const SchedulePickup = () => {
                   <Form.Label>Pickup Time</Form.Label>
                   <Form.Select
                     name="pickupTime"
+                    value={formData.pickupTime}
                     onChange={handleChange}
                     isInvalid={!!errors.pickupTime}
                   >
-                    <option>Select Time</option>
+                    <option value="">Select Time</option>
                     {timeSlots.map((slot) => (
                       <option key={slot.value} value={slot.value}>
                         {slot.label}
@@ -681,6 +984,7 @@ const SchedulePickup = () => {
                   <Form.Control
                     type="text"
                     name="deliveryAddress"
+                    value={formData.deliveryAddress}
                     onChange={handleChange}
                     placeholder="Enter delivery address"
                     isInvalid={!!errors.deliveryAddress}
@@ -696,6 +1000,7 @@ const SchedulePickup = () => {
                   <Form.Control
                     type="date"
                     name="deliveryDate"
+                    value={formData.deliveryDate}
                     onChange={handleChange}
                     isInvalid={!!errors.deliveryDate}
                   />
@@ -709,10 +1014,11 @@ const SchedulePickup = () => {
                   <Form.Label>Delivery Time</Form.Label>
                   <Form.Select
                     name="deliveryTime"
+                    value={formData.deliveryTime}
                     onChange={handleChange}
                     isInvalid={!!errors.deliveryTime}
                   >
-                    <option>Select Time</option>
+                    <option value="">Select Time</option>
                     {timeSlots.map((slot) => (
                       <option key={slot.value} value={slot.value}>
                         {slot.label}
@@ -733,8 +1039,8 @@ const SchedulePickup = () => {
                 onClick={() => setShowPriceModal(true)}
                 disabled={!formData.serviceType}
               >
-                <DollarSign className="me-2" />
-                Estimated Total: ${calculateTotalPrice.toFixed(2)}
+                <FaRupeeSign className="me-2" />
+                Estimated Total: ₹{calculateTotalPrice.toFixed(2)}
               </Button>
             </div>
 
@@ -759,7 +1065,7 @@ const SchedulePickup = () => {
             <Modal.Title>Price Breakdown</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h5>Service Type: {formData.serviceType}</h5>
+            <h5>Service Type: {formData.serviceType || "Not selected"}</h5>
 
             {Object.entries(formData.clothingItems).map(([section, items]) => {
               const sectionItems = Object.entries(items).filter(
@@ -777,7 +1083,7 @@ const SchedulePickup = () => {
                     const itemPrice = getCurrentPrice(section, itemName);
                     return (
                       <p key={itemName} className="mb-1">
-                        {itemName}: {count} x ${itemPrice} = $
+                        {itemName}: {count} x ₹{itemPrice} = ₹
                         {(count * itemPrice).toFixed(2)}
                       </p>
                     );
@@ -787,7 +1093,7 @@ const SchedulePickup = () => {
             })}
 
             <h4 className="mt-3 text-right">
-              Total: ${calculateTotalPrice.toFixed(2)}
+              Total: ₹{calculateTotalPrice.toFixed(2)}
             </h4>
           </Modal.Body>
           <Modal.Footer>

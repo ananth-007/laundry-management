@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -108,6 +109,20 @@ const HistoryPage = () => {
     setShowModal(false);
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    sessionStorage.clear();
+
+    // Clear history and force redirect
+    window.history.go(-(window.history.length - 1));
+    window.location.href = "/Login";
+  };
+
   // Function to get appropriate badge variant based on status
   const getStatusVariant = (status) => {
     switch (status) {
@@ -171,6 +186,7 @@ const HistoryPage = () => {
 
           <div className="mt-auto p-3">
             <Button
+              onClick={handleLogout}
               variant="dark"
               className="w-100 d-flex align-items-center justify-content-center rounded-4"
             >

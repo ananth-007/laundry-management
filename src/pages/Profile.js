@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Nav, Image } from "react-bootstrap";
 import {
   FaHome,
@@ -23,12 +24,26 @@ const ProfilePage = () => {
     avatar: profileImg,
   });
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    sessionStorage.clear();
+
+    // Clear history and force redirect
+    window.history.go(-(window.history.length - 1));
+    window.location.href = "/Login";
+  };
+
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
-    // Check if file exists
+    // Check if file exists and validate file type
     if (!file) return;
 
     // Check file type
@@ -56,7 +71,7 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
 
     // Here you would typically handle the file upload to your server
-    // uploadFile(file);
+    uploadFile(file);
   };
 
   const uploadFile = (file) => {
@@ -127,6 +142,7 @@ const ProfilePage = () => {
 
             <div className="mt-auto p-3">
               <Button
+                onClick={handleLogout}
                 variant="dark"
                 className="w-100 d-flex align-items-center justify-content-center rounded-4"
               >
@@ -218,6 +234,10 @@ const ProfilePage = () => {
                           <Form.Control
                             type="text"
                             placeholder="Enter your full name"
+                            value={userInfo.name}
+                            onChange={(e) =>
+                              setUserInfo({ ...userInfo, name: e.target.value })
+                            }
                           />
                         </div>
                       </Form.Group>
@@ -238,6 +258,13 @@ const ProfilePage = () => {
                           <Form.Control
                             type="email"
                             placeholder="Enter your email"
+                            value={userInfo.email}
+                            onChange={(e) =>
+                              setUserInfo({
+                                ...userInfo,
+                                email: e.target.value,
+                              })
+                            }
                           />
                         </div>
                       </Form.Group>
@@ -259,6 +286,13 @@ const ProfilePage = () => {
                           <Form.Control
                             type="tel"
                             placeholder="Enter your phone number"
+                            value={userInfo.phone}
+                            onChange={(e) =>
+                              setUserInfo({
+                                ...userInfo,
+                                phone: e.target.value,
+                              })
+                            }
                           />
                         </div>
                       </Form.Group>

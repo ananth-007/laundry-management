@@ -1,5 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import FooterBeforeLogin from "../components/FooterBeforeLogin";
 import NavbarBeforeLogin from "../components/NavbarBeforeLogin";
@@ -29,6 +31,15 @@ import testimonialJohnDoeImg from "../assets/testimonial-johndoe-img.png";
 import "./GetStarted.css";
 
 const GetStarted = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If already logged in, redirect to home
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/HomePage", { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="container-fluid p-0">
       {/* Navbar */}

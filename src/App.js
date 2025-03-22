@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GetStarted from "./pages/GetStarted";
 import Login from "./pages/Login";
@@ -15,6 +20,7 @@ import SchedulePickup from "./pages/SchedulePickup";
 import ProfilePage from "./pages/Profile";
 import OrderStatus from "./pages/OrderStatus";
 import HistoryPage from "./pages/HistoryPage";
+import ProtectedRoute from "./pages/ProtectedRoute";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -26,7 +32,14 @@ const App = () => {
         <Route path="/GetStarted" element={<GetStarted />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
-        <Route path="/HomePage" element={<HomePage />} />
+        <Route
+          path="/HomePage"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/Stores" element={<Stores />} />
         <Route path="/PriceList" element={<PriceList />} />
         <Route path="/DryCleaning" element={<DryCleaning />} />
@@ -34,9 +47,30 @@ const App = () => {
         <Route path="/WashFold" element={<WashFold />} />
         <Route path="/WashIron" element={<WashIron />} />
         <Route path="/SchedulePickup" element={<SchedulePickup />} />
-        <Route path="/ProfilePage" element={<ProfilePage />} />
-        <Route path="/OrderStatus" element={<OrderStatus />} />
-        <Route path="/HistoryPage" element={<HistoryPage />} />
+        <Route
+          path="/OrderStatus"
+          element={
+            <ProtectedRoute>
+              <OrderStatus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ProfilePage"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/HistoryPage"
+          element={
+            <ProtectedRoute>
+              <HistoryPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

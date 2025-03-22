@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Container,
   Row,
@@ -9,6 +10,8 @@ import {
   ProgressBar,
   Badge,
   Modal,
+  Spinner,
+  Alert,
 } from "react-bootstrap";
 import {
   FaHome,
@@ -30,144 +33,126 @@ import delivered from "../assets/OrderStatusImg/delivered.png";
 import inprogress from "../assets/OrderStatusImg/inprogress.png";
 import pickup1 from "../assets/OrderStatusImg/pickup1.png";
 import outfordelivery from "../assets/OrderStatusImg/outfordelivery.png";
+import axios from "axios"; // Make sure axios is imported
 
 const OrderStatus = () => {
+  // URL parameters - get orderId if passed
+  const { orderId } = useParams();
+
+  // State for orders and current order
+  const [orders, setOrders] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // Real-time tracking state
-  const [activeStatus, setActiveStatus] = useState(3);
-  const [progress, setProgress] = useState(55);
+  const [activeStatus, setActiveStatus] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [estimatedDeliveryTime, setEstimatedDeliveryTime] = useState(null);
   const [remainingTime, setRemainingTime] = useState({});
   const [showPriceModal, setShowPriceModal] = useState(false);
 
-  // Order details
-  const orderDetails = {
-    orderId: "#BD00123",
-    items: "4Pc",
-    customerName: "Ratan Tata",
-    serviceType: "Dry Cleaning",
-    orderedDate: "15-Mar-2025",
-    deliveryDate: "16-Mar-2025",
-    address:
-      "Flat 201, BVR Lake Front, 1/2, Kanaka Nagar, Veerannapalya, Nagavara, Bengaluru, Karnataka 560045",
-    storePhone: "080-12345678",
-    notesFromStore:
-      "Your white shirts require special treatment, will take extra care",
-  };
+  const navigate = useNavigate();
 
-  // Price breakdown data
-  const priceData = {
-    serviceType: "Dry Cleaning",
-    clothingItems: {
-      tops: {
-        Shirt: 3,
-        "T-Shirt": 1,
-      },
-      bottoms: {
-        Trousers: 2,
-      },
-    },
-    prices: {
-      tops: {
-        Shirt: 3.5,
-        "T-Shirt": 2.75,
-      },
-      bottoms: {
-        Trousers: 4.5,
-      },
-    },
-  };
+  // Fetch orders from database
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
 
-  // Calculate prices
-  const getCurrentPrice = (section, itemName) => {
-    return priceData.prices[section][itemName];
-  };
+        // Get user token from localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
 
-  const calculateTotalPrice = Object.entries(priceData.clothingItems).reduce(
-    (total, [section, items]) => {
-      return (
-        total +
-        Object.entries(items).reduce((sectionTotal, [itemName, count]) => {
-          return sectionTotal + count * getCurrentPrice(section, itemName);
-        }, 0)
-      );
-    },
-    0
-  );
+        // API call to fetch user's orders
+        const response = await axios.get("/api/orders", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  // Notification updates
-  const [updates, setUpdates] = useState([
-    {
-      time: "10:30 AM",
-      message: "Order placed successfully",
-      status: "complete",
-    },
-    {
-      time: "02:15 PM",
-      message: "Pickup agent collected your clothes",
-      status: "complete",
-    },
-    {
-      time: "05:00 PM",
-      message: "Clothes are now being processed",
-      status: "active",
-    },
-    {
-      time: "08:30 AM",
-      message: "Clothes will be out for delivery",
-      status: "pending",
-    },
-    {
-      time: "10:00 AM",
-      message: "Expected delivery to your address",
-      status: "pending",
-    },
-  ]);
+        if (response.data && response.data.orders) {
+          setOrders(response.data.orders);
 
-  // Status steps info
-  const statusSteps = [
-    {
-      id: 1,
-      name: "Order Placed",
-      icon: Orderplaced,
-      time: "15 Mar, 10:30 AM",
-      desc: "Order received",
-      completed: true,
-    },
-    {
-      id: 2,
-      name: "Order Pickup",
-      icon: pickup1,
-      time: "15 Mar, 02:15 PM",
-      desc: "Items collected",
-      completed: true,
-    },
-    {
-      id: 3,
-      name: "In Process",
-      icon: inprogress,
-      time: "15 Mar, 05:00 PM",
-      desc: "Cleaning in progress",
-      completed: false,
-      active: true,
-    },
-    {
-      id: 4,
-      name: "Out for Delivery",
-      icon: outfordelivery,
-      time: "16 Mar, 08:30 AM",
-      desc: "On the way",
-      completed: false,
-    },
-    {
-      id: 5,
-      name: "Delivered",
-      icon: delivered,
-      time: "16 Mar, 10:00 AM",
-      desc: "Completed",
-      completed: false,
-    },
-  ];
+          // If orderId is provided in URL params, find that specific order
+          if (orderId) {
+            const order = response.data.orders.find(
+              (o) => o._id === orderId || o.orderId === orderId
+            );
+            if (order) {
+              setCurrentOrder(order);
+            } else {
+              // If order not found, use the most recent active order
+              const activeOrders = response.data.orders.filter(
+                (o) => o.status !== "Delivered" && o.status !== "Cancelled"
+              );
+              if (activeOrders.length > 0) {
+                setCurrentOrder(activeOrders[0]);
+              } else if (response.data.orders.length > 0) {
+                // Fallback to most recent order
+                setCurrentOrder(response.data.orders[0]);
+              }
+            }
+          } else if (response.data.orders.length > 0) {
+            // Default to most recent order if no orderId specified
+            const activeOrders = response.data.orders.filter(
+              (o) => o.status !== "Delivered" && o.status !== "Cancelled"
+            );
+            if (activeOrders.length > 0) {
+              setCurrentOrder(activeOrders[0]);
+            } else {
+              setCurrentOrder(response.data.orders[0]);
+            }
+          }
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+        setError(err.message || "Failed to fetch orders");
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [orderId]);
+
+  // Update tracking info based on current order
+  useEffect(() => {
+    if (currentOrder) {
+      // Map order status to activeStatus index
+      const statusMapping = {
+        "Order Placed": 0,
+        "Order Pickup": 1,
+        "In Process": 2,
+        "Out for Delivery": 3,
+        Delivered: 4,
+      };
+
+      // Set active status based on current order status
+      const status = currentOrder.status || "Order Placed";
+      setActiveStatus(statusMapping[status] || 0);
+
+      // Calculate progress percentage based on status
+      const progressMapping = {
+        "Order Placed": 10,
+        "Order Pickup": 30,
+        "In Process": 55,
+        "Out for Delivery": 80,
+        Delivered: 100,
+      };
+      setProgress(progressMapping[status] || 10);
+
+      // Parse deliveryDate to set estimated delivery time
+      if (currentOrder.deliveryDate) {
+        const deliveryDate = new Date(currentOrder.deliveryDate);
+        setEstimatedDeliveryTime(deliveryDate);
+      }
+    }
+  }, [currentOrder]);
 
   // Set up time tracking
   useEffect(() => {
@@ -176,23 +161,8 @@ const OrderStatus = () => {
       setCurrentTime(new Date());
     }, 60000);
 
-    // Set estimated delivery time (for demo purposes)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(10, 0, 0, 0);
-    setEstimatedDeliveryTime(tomorrow);
-
-    // For demo - slowly increase progress
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev < 58) return prev + 0.2;
-        return prev;
-      });
-    }, 10000);
-
     return () => {
       clearInterval(timer);
-      clearInterval(progressTimer);
     };
   }, []);
 
@@ -202,9 +172,11 @@ const OrderStatus = () => {
       const updateRemainingTime = () => {
         const diff = estimatedDeliveryTime - new Date();
         if (diff > 0) {
-          const hours = Math.floor(diff / (6000 * 60 * 60));
+          const hours = Math.floor(diff / (1000 * 60 * 60));
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           setRemainingTime({ hours, minutes });
+        } else {
+          setRemainingTime({ hours: 0, minutes: 0 });
         }
       };
 
@@ -214,10 +186,285 @@ const OrderStatus = () => {
     }
   }, [estimatedDeliveryTime, currentTime]);
 
+  // Create status steps based on current order
+  const getStatusSteps = () => {
+    if (!currentOrder) return [];
+
+    const orderDate = new Date(
+      currentOrder.createdAt || currentOrder.orderedDate
+    );
+    const deliveryDate = new Date(currentOrder.deliveryDate);
+
+    // Format dates for display
+    const formatDate = (date) => {
+      return date
+        .toLocaleDateString("en-US", {
+          day: "2-digit",
+          month: "short",
+        })
+        .replace(",", "");
+    };
+
+    // Format times for display
+    const formatTime = (date) => {
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    };
+
+    // Calculate intermediate times
+    const pickupTime = new Date(currentOrder.pickupTime || orderDate);
+    pickupTime.setHours(pickupTime.getHours() + 4);
+
+    const processTime = new Date(pickupTime);
+    processTime.setHours(processTime.getHours() + 3);
+
+    const outForDeliveryTime = new Date(deliveryDate);
+    outForDeliveryTime.setHours(outForDeliveryTime.getHours() - 2);
+
+    // Check if status is active or completed
+    const isCompleted = (stepIndex) => stepIndex < activeStatus;
+    const isActive = (stepIndex) => stepIndex === activeStatus;
+
+    return [
+      {
+        id: 1,
+        name: "Order Placed",
+        icon: Orderplaced,
+        time: `${formatDate(orderDate)}, ${formatTime(orderDate)}`,
+        desc: "Order received",
+        completed: isCompleted(0),
+        active: isActive(0),
+      },
+      {
+        id: 2,
+        name: "Order Pickup",
+        icon: pickup1,
+        time: `${formatDate(pickupTime)}, ${formatTime(pickupTime)}`,
+        desc: "Items collected",
+        completed: isCompleted(1),
+        active: isActive(1),
+      },
+      {
+        id: 3,
+        name: "In Process",
+        icon: inprogress,
+        time: `${formatDate(processTime)}, ${formatTime(processTime)}`,
+        desc: "Cleaning in progress",
+        completed: isCompleted(2),
+        active: isActive(2),
+      },
+      {
+        id: 4,
+        name: "Out for Delivery",
+        icon: outfordelivery,
+        time: `${formatDate(outForDeliveryTime)}, ${formatTime(
+          outForDeliveryTime
+        )}`,
+        desc: "On the way",
+        completed: isCompleted(3),
+        active: isActive(3),
+      },
+      {
+        id: 5,
+        name: "Delivered",
+        icon: delivered,
+        time: `${formatDate(deliveryDate)}, ${formatTime(deliveryDate)}`,
+        desc: "Completed",
+        completed: isCompleted(4),
+        active: isActive(4),
+      },
+    ];
+  };
+
+  // Generate status updates based on current order
+  const getStatusUpdates = () => {
+    if (!currentOrder) return [];
+
+    const statusSteps = getStatusSteps();
+
+    return statusSteps.map((step, index) => {
+      let status = "pending";
+      if (step.completed) status = "complete";
+      if (step.active) status = "active";
+
+      return {
+        time: step.time.split(", ")[1], // Just the time portion
+        message: getUpdateMessage(step.name),
+        status: status,
+      };
+    });
+  };
+
+  // Get appropriate message for each status
+  const getUpdateMessage = (status) => {
+    switch (status) {
+      case "Order Placed":
+        return "Order placed successfully";
+      case "Order Pickup":
+        return "Pickup agent collected your clothes";
+      case "In Process":
+        return "Clothes are now being processed";
+      case "Out for Delivery":
+        return "Clothes are out for delivery";
+      case "Delivered":
+        return "Order has been delivered";
+      default:
+        return "Status updated";
+    }
+  };
+
   // Format time display
   const formatTimeDisplay = (date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
+
+  // Format date for display (e.g., "15-Mar-2025")
+  const formatDateDisplay = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "short" });
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  // Price breakdown data
+  const getPriceData = () => {
+    if (!currentOrder || !currentOrder.items) {
+      // Default price data
+      return {
+        serviceType: "Dry Cleaning",
+        clothingItems: {
+          tops: {
+            Shirt: 3,
+            "T-Shirt": 1,
+          },
+          bottoms: {
+            Trousers: 2,
+          },
+        },
+        prices: {
+          tops: {
+            Shirt: 3.5,
+            "T-Shirt": 2.75,
+          },
+          bottoms: {
+            Trousers: 4.5,
+          },
+        },
+      };
+    }
+
+    // Convert API items to price data format
+    const clothingItems = {};
+    const prices = {};
+
+    currentOrder.items.forEach((item) => {
+      // Create category if it doesn't exist
+      if (!clothingItems[item.category]) {
+        clothingItems[item.category] = {};
+        prices[item.category] = {};
+      }
+
+      // Add item to category
+      clothingItems[item.category][item.name] = item.quantity;
+      prices[item.category][item.name] = item.pricePerItem;
+    });
+
+    return {
+      serviceType: currentOrder.serviceType || "Dry Cleaning",
+      clothingItems,
+      prices,
+    };
+  };
+
+  // Calculate prices
+  const getCurrentPrice = (section, itemName) => {
+    const priceData = getPriceData();
+    return priceData.prices[section][itemName];
+  };
+
+  // Calculate total price
+  const calculateTotalPrice = () => {
+    if (currentOrder && currentOrder.totalPrice) {
+      return currentOrder.totalPrice;
+    }
+
+    const priceData = getPriceData();
+    return Object.entries(priceData.clothingItems || {}).reduce(
+      (total, [section, items]) => {
+        return (
+          total +
+          Object.entries(items || {}).reduce(
+            (sectionTotal, [itemName, count]) => {
+              return sectionTotal + count * getCurrentPrice(section, itemName);
+            },
+            0
+          )
+        );
+      },
+      0
+    );
+  };
+
+  const handleLogout = () => {
+    // Clear auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    sessionStorage.clear();
+    sessionStorage.removeItem("historyReplaced");
+
+    // Clear history and force redirect
+    window.history.go(-(window.history.length - 1));
+    window.location.href = "/Login";
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="d-flex min-vh-100 justify-content-center align-items-center">
+        <Spinner animation="border" variant="primary" />
+        <span className="ms-2">Loading order details...</span>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="d-flex min-vh-100 justify-content-center align-items-center">
+        <Alert variant="danger">
+          <Alert.Heading>Error Loading Orders</Alert.Heading>
+          <p>{error}</p>
+          <Button variant="primary" onClick={() => navigate("/HomePage")}>
+            Back to Home
+          </Button>
+        </Alert>
+      </div>
+    );
+  }
+
+  // No orders state
+  if (!currentOrder) {
+    return (
+      <div className="d-flex min-vh-100 justify-content-center align-items-center">
+        <Alert variant="info">
+          <Alert.Heading>No Active Orders</Alert.Heading>
+          <p>You don't have any active orders right now.</p>
+          <Button variant="primary" onClick={() => navigate("/Stores")}>
+            Find a Store
+          </Button>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Get status steps and updates based on current order
+  const statusSteps = getStatusSteps();
+  const updates = getStatusUpdates();
 
   return (
     <div className="app-container d-flex">
@@ -268,6 +515,7 @@ const OrderStatus = () => {
 
           <div className="mt-auto p-3">
             <Button
+              onClick={handleLogout}
               variant="dark"
               className="w-100 d-flex align-items-center justify-content-center rounded-4"
             >
@@ -305,20 +553,28 @@ const OrderStatus = () => {
               <FaClipboardList />
             </Badge>
             <div>
-              <h5 className="mb-0 fw-bold">{orderDetails.orderId}</h5>
+              <h5 className="mb-0 fw-bold">
+                {currentOrder.orderId || `#${currentOrder._id.substring(0, 8)}`}
+              </h5>
               <p className="mb-0 text-muted small">
-                {orderDetails.items} Items
+                {currentOrder.items?.length || 0} Items
               </p>
             </div>
           </div>
 
           <div className="d-flex align-items-center">
-            <Badge bg="warning" text="dark" className="me-2 p-2">
-              In Process
+            <Badge
+              bg={currentOrder.status === "In Process" ? "warning" : "primary"}
+              text={currentOrder.status === "In Process" ? "dark" : "white"}
+              className="me-2 p-2"
+            >
+              {currentOrder.status || "In Process"}
             </Badge>
             <div className="mx-3 text-center">
               <p className="mb-0 small text-muted">Estimated Delivery</p>
-              <p className="mb-0 fw-bold">{orderDetails.deliveryDate}</p>
+              <p className="mb-0 fw-bold">
+                {formatDateDisplay(currentOrder.deliveryDate)}
+              </p>
             </div>
           </div>
         </div>
@@ -453,155 +709,124 @@ const OrderStatus = () => {
                       <p className="mb-0 text-muted small">{step.desc}</p>
 
                       {step.active && (
-                        <div
-                          className="mt-2 p-2 rounded-3"
-                          style={{ backgroundColor: "#f0f7ff" }}
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="me-2">
-                              <div
-                                className="spinner-grow spinner-grow-sm text-primary"
-                                role="status"
-                              >
-                                <span className="visually-hidden">
-                                  Loading...
-                                </span>
-                              </div>
-                            </div>
-                            <p className="mb-0 small">
-                              Your clothes are currently being processed with
-                              special care
-                            </p>
+                        <div className="mt-2 text-primary small fw-bold d-flex align-items-center">
+                          <span className="me-2">In progress</span>
+                          <div
+                            className="spinner-grow spinner-grow-sm text-primary"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
                           </div>
                         </div>
                       )}
                     </div>
+
+                    {/* Connecting line */}
+                    {index < statusSteps.length - 1 && (
+                      <div
+                        className="position-absolute"
+                        style={{
+                          left: "25px",
+                          top: `${index * 80 + 50}px`,
+                          width: "2px",
+                          height: "30px",
+                          background: step.completed ? "#198754" : "#dee2e6",
+                          zIndex: 1,
+                        }}
+                      ></div>
+                    )}
                   </div>
                 ))}
-
-                {/* Vertical timeline line */}
-                <div
-                  className="timeline-line position-absolute"
-                  style={{
-                    width: "2px",
-                    backgroundColor: "#e9ecef",
-                    height: "100%",
-                    left: "24px",
-                    top: "0",
-                    zIndex: 1,
-                  }}
-                ></div>
-
-                {/* Active timeline line */}
-                <div
-                  className="timeline-line position-absolute"
-                  style={{
-                    width: "2px",
-                    backgroundColor: "#0d6efd",
-                    height: `${(activeStatus / statusSteps.length) * 100}%`,
-                    left: "24px",
-                    top: "0",
-                    zIndex: 1,
-                    transition: "height 0.5s ease-in-out",
-                  }}
-                ></div>
               </div>
             </div>
           </Col>
 
-          {/* Right Column - Order Details and Updates */}
+          {/* Right Column - Order Details & Notifications */}
           <Col lg={4}>
-            {/* Order Details */}
+            {/* Order Details Card */}
             <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
+              <h5 className="fw-bold mb-3">Order Details</h5>
+
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="fw-bold mb-0">Order Details</h5>
-                <Badge bg="success" className="rounded-pill">
-                  {orderDetails.serviceType}
-                </Badge>
+                <div>
+                  <p className="mb-0 text-muted small">Customer</p>
+                  <p className="mb-0 fw-bold">{currentOrder.customerName}</p>
+                </div>
+                <div>
+                  <p className="mb-0 text-muted small">Service Type</p>
+                  <p className="mb-0 fw-bold">{currentOrder.serviceType}</p>
+                </div>
               </div>
 
-              <div className="customer-details">
-                <div className="info-item mb-2 pb-2 border-bottom">
-                  <p className="text-muted mb-1 small">Customer</p>
-                  <p className="fw-bold mb-0">{orderDetails.customerName}</p>
-                </div>
-
-                <div className="info-item mb-2 pb-2 border-bottom">
-                  <p className="text-muted mb-1 small">Order Date</p>
-                  <p className="fw-bold mb-0">{orderDetails.orderedDate}</p>
-                </div>
-
-                <div className="info-item mb-2 pb-2 border-bottom">
-                  <p className="text-muted mb-1 small">Delivery Address</p>
-                  <p className="fw-bold mb-0 small">{orderDetails.address}</p>
-                </div>
-
-                <div className="info-item mb-2 pb-2 border-bottom">
-                  <p className="text-muted mb-1 small">Store Notes</p>
-                  <p className="fst-italic mb-0 small">
-                    {orderDetails.notesFromStore}
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <p className="mb-0 text-muted small">Ordered Date</p>
+                  <p className="mb-0 fw-bold">
+                    {formatDateDisplay(
+                      currentOrder.createdAt || currentOrder.orderedDate
+                    )}
                   </p>
                 </div>
-
-                {/* New Price Overview Section */}
-                <div className="info-item mb-2 pb-2 border-bottom">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <p className="text-muted mb-1 small">Price</p>
-                    <Badge bg="info" className="rounded-pill">
-                      ${calculateTotalPrice.toFixed(2)}
-                    </Badge>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <p className="mb-0 small">
-                      Items:{" "}
-                      <span className="fw-bold">
-                        {Object.values(priceData.clothingItems).reduce(
-                          (total, items) =>
-                            total +
-                            Object.values(items).reduce(
-                              (sum, count) => sum + count,
-                              0
-                            ),
-                          0
-                        )}{" "}
-                        pcs
-                      </span>
-                    </p>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="p-0 text-primary"
-                      onClick={() => setShowPriceModal(true)}
-                    >
-                      <div className="d-flex align-items-center">
-                        <FaReceipt className="me-1" size={12} />
-                        <span>View breakdown</span>
-                      </div>
-                    </Button>
-                  </div>
+                <div>
+                  <p className="mb-0 text-muted small">Delivery Date</p>
+                  <p className="mb-0 fw-bold">
+                    {formatDateDisplay(currentOrder.deliveryDate)}
+                  </p>
                 </div>
+              </div>
+
+              <div className="mb-3">
+                <p className="mb-1 text-muted small">Delivery Address</p>
+                <div className="d-flex align-items-start">
+                  <FaMapMarkedAlt className="text-primary me-2 mt-1" />
+                  <p className="mb-0 small">{currentOrder.address}</p>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <p className="mb-1 text-muted small">Store Contact</p>
+                <div className="d-flex align-items-center">
+                  <FaPhone className="text-primary me-2" />
+                  <p className="mb-0">
+                    {currentOrder.storePhone || "080-12345678"}
+                  </p>
+                </div>
+              </div>
+
+              {currentOrder.notes && (
+                <div className="p-3 bg-light rounded-3 small">
+                  <p className="mb-1 fw-bold">Note from Store:</p>
+                  <p className="mb-0 text-muted">{currentOrder.notes}</p>
+                </div>
+              )}
+
+              <div className="mt-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <p className="mb-0 text-muted small">Total Price</p>
+                  <p className="mb-0 fw-bold">
+                    ₹{calculateTotalPrice().toFixed(2)}
+                  </p>
+                </div>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  className="rounded-pill"
+                  onClick={() => setShowPriceModal(true)}
+                >
+                  <FaReceipt className="me-1" /> View Breakdown
+                </Button>
               </div>
             </div>
 
-            {/* Live Updates */}
+            {/* Notification Updates */}
             <div className="bg-white rounded-4 shadow-sm p-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="fw-bold mb-0">Live Updates</h5>
-                <Badge pill bg="danger" className="d-flex align-items-center">
-                  <FaBell className="me-1" /> 3 New
-                </Badge>
-              </div>
+              <h5 className="fw-bold mb-3">Updates</h5>
 
-              <div className="updates-timeline">
+              <div className="notification-timeline position-relative">
                 {updates.map((update, index) => (
-                  <div
-                    key={index}
-                    className={`update-item d-flex mb-3 ${
-                      update.status === "active" ? "active-update" : ""
-                    }`}
-                  >
+                  <div key={index} className="d-flex mb-3">
                     <div
-                      className={`update-indicator rounded-circle ${
+                      className={`notification-dot rounded-circle d-flex justify-content-center align-items-center ${
                         update.status === "complete"
                           ? "bg-success"
                           : update.status === "active"
@@ -609,49 +834,74 @@ const OrderStatus = () => {
                           : "bg-light"
                       }`}
                       style={{
-                        width: "12px",
-                        height: "12px",
-                        marginTop: "6px",
+                        width: "30px",
+                        height: "30px",
                         border:
-                          update.status === "pending"
-                            ? "1px solid #dee2e6"
-                            : "none",
+                          update.status === "active"
+                            ? "2px solid #0d6efd"
+                            : "1px solid #dee2e6",
+                        zIndex: 2,
+                        position: "relative",
                       }}
-                    ></div>
-                    <div className="ms-3">
-                      <div className="d-flex justify-content-between align-items-center">
+                    >
+                      {update.status === "complete" && (
+                        <FaBell style={{ color: "white", fontSize: "12px" }} />
+                      )}
+                      {update.status === "active" && (
+                        <>
+                          <FaBell
+                            style={{ color: "white", fontSize: "12px" }}
+                          />
+                          <div
+                            className="position-absolute"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "50%",
+                              border: "2px solid #0d6efd",
+                              opacity: 0.5,
+                              animation: "pulse 2s infinite",
+                            }}
+                          ></div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="notification-content ms-3 flex-grow-1">
+                      <div className="d-flex justify-content-between">
                         <p
                           className={`mb-0 small ${
-                            update.status === "active"
-                              ? "fw-bold text-primary"
-                              : update.status === "complete"
-                              ? "text-success"
-                              : "text-muted"
+                            update.status === "active" ? "fw-bold" : ""
                           }`}
                         >
                           {update.message}
                         </p>
-                        <span className="text-muted smaller ms-2">
-                          {update.time}
-                        </span>
+                        <span className="text-muted small">{update.time}</span>
                       </div>
-
                       {update.status === "active" && (
-                        <div className="live-indicator d-flex align-items-center mt-1">
-                          <div
-                            className="pulsing-dot me-1"
-                            style={{
-                              width: "6px",
-                              height: "6px",
-                              borderRadius: "50%",
-                              backgroundColor: "#0d6efd",
-                              animation: "pulseDot 1.5s infinite",
-                            }}
-                          ></div>
-                          <span className="text-primary smaller">Live now</span>
-                        </div>
+                        <span className="badge bg-primary text-white mt-1">
+                          Now
+                        </span>
                       )}
                     </div>
+
+                    {/* Connecting line */}
+                    {index < updates.length - 1 && (
+                      <div
+                        className="position-absolute"
+                        style={{
+                          left: "15px",
+                          top: `${index * 60 + 25}px`,
+                          width: "2px",
+                          height: "40px",
+                          background:
+                            update.status === "complete"
+                              ? "#198754"
+                              : "#dee2e6",
+                          zIndex: 1,
+                        }}
+                      ></div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -664,147 +914,64 @@ const OrderStatus = () => {
           show={showPriceModal}
           onHide={() => setShowPriceModal(false)}
           centered
-          className="price-breakdown-modal"
         >
-          <Modal.Header closeButton className="border-0 pb-0">
-            <Modal.Title className="text-primary fw-bold">
-              <FaReceipt className="me-2" />
-              Price Breakdown
-            </Modal.Title>
+          <Modal.Header closeButton>
+            <Modal.Title>Price Breakdown</Modal.Title>
           </Modal.Header>
-          <Modal.Body className="pt-0">
-            <div
-              className="p-2 rounded-4 mb-3"
-              style={{ backgroundColor: "#f8f9fa" }}
-            >
-              <div className="d-flex align-items-center mb-2">
-                <div
-                  className="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2"
-                  style={{ width: "24px", height: "24px" }}
-                >
-                  <FaStore className="text-white" size={12} />
+          <Modal.Body>
+            <p className="text-muted small">
+              Service Type: {getPriceData().serviceType}
+            </p>
+
+            {Object.entries(getPriceData().clothingItems || {}).map(
+              ([section, items]) => (
+                <div key={section} className="mb-3">
+                  <h6 className="text-capitalize">{section}</h6>
+                  <table className="table table-sm">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Item</th>
+                        <th className="text-center">Qty</th>
+                        <th className="text-end">Price</th>
+                        <th className="text-end">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(items || {}).map(([itemName, count]) => (
+                        <tr key={itemName}>
+                          <td>{itemName}</td>
+                          <td className="text-center">{count}</td>
+                          <td className="text-end">
+                            ₹{getCurrentPrice(section, itemName).toFixed(2)}
+                          </td>
+                          <td className="text-end">
+                            ₹
+                            {(
+                              count * getCurrentPrice(section, itemName)
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <p className="mb-0 fw-bold">
-                  Service Type: {priceData.serviceType}
-                </p>
-              </div>
+              )
+            )}
 
-              <div className="ms-4">
-                <p className="text-muted mb-1 small">
-                  Order #{orderDetails.orderId} • {orderDetails.orderedDate}
-                </p>
-              </div>
-            </div>
-
-            <div className="price-items px-2">
-              {Object.entries(priceData.clothingItems).map(
-                ([section, items]) => {
-                  const sectionItems = Object.entries(items).filter(
-                    ([_, count]) => count > 0
-                  );
-                  if (sectionItems.length === 0) return null;
-
-                  return (
-                    <div key={section} className="mb-3">
-                      <h6 className="text-uppercase small fw-bold text-secondary mb-2">
-                        {section.charAt(0).toUpperCase() + section.slice(1)}{" "}
-                        Items
-                      </h6>
-
-                      {sectionItems.map(([itemName, count], idx) => {
-                        const itemPrice = getCurrentPrice(section, itemName);
-                        return (
-                          <div
-                            key={`${section}-${itemName}`}
-                            className={`d-flex justify-content-between py-2 ${
-                              idx !== sectionItems.length - 1
-                                ? "border-bottom"
-                                : ""
-                            }`}
-                          >
-                            <div>
-                              <p className="mb-0">{itemName}</p>
-                              <p className="text-muted mb-0 small">
-                                {count} × ${itemPrice.toFixed(2)}
-                              </p>
-                            </div>
-                            <p className="mb-0 fw-bold">
-                              ${(count * itemPrice).toFixed(2)}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }
-              )}
-
-              <div className="d-flex justify-content-between mt-4 pt-2 border-top">
-                <div>
-                  <p className="mb-0 fw-bold">Total</p>
-                  <p className="text-muted mb-0 small">Inc. of all taxes</p>
-                </div>
-                <p
-                  className="mb-0 fw-bold text-primary"
-                  style={{ fontSize: "1.2rem" }}
-                >
-                  ${calculateTotalPrice.toFixed(2)}
-                </p>
-              </div>
+            <div className="d-flex justify-content-between border-top pt-2 mt-2">
+              <h6 className="fw-bold">Total</h6>
+              <h6 className="fw-bold">₹{calculateTotalPrice().toFixed(2)}</h6>
             </div>
           </Modal.Body>
-          <Modal.Footer className="border-0 pt-0">
+          <Modal.Footer>
             <Button
-              variant="primary"
-              className="w-100 rounded-pill"
+              variant="secondary"
               onClick={() => setShowPriceModal(false)}
             >
               Close
             </Button>
           </Modal.Footer>
         </Modal>
-
-        {/* Add animation keyframes via style tag */}
-        <style>
-          {`
-            @keyframes pulse {
-              0% {
-                transform: scale(1);
-                opacity: 1;
-              }
-              50% {
-                transform: scale(1.1);
-                opacity: 0.7;
-              }
-              100% {
-                transform: scale(1);
-                opacity: 1;
-              }
-            }
-            
-            @keyframes pulseDot {
-              0% {
-                opacity: 0.4;
-              }
-              50% {
-                opacity: 1;
-              }
-              100% {
-                opacity: 0.4;
-              }
-            }
-            
-            .smaller {
-              font-size: 0.7rem;
-            }
-            
-            .price-breakdown-modal .modal-content {
-              border-radius: 12px;
-              border: none;
-              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            }
-          `}
-        </style>
       </Col>
     </div>
   );
