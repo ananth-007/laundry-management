@@ -1,978 +1,1536 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Truck,
+  Package,
+  Clock,
+  Calendar,
+  MapPin,
+  DollarSign,
+  CheckCircle,
+  AlertCircle,
+  RefreshCw,
+  Edit,
+  Save,
+  X,
+} from "lucide-react";
 import {
   Container,
   Row,
   Col,
-  Nav,
-  Image,
-  Button,
-  ProgressBar,
+  Card,
   Badge,
-  Modal,
+  Button,
   Spinner,
   Alert,
+  ListGroup,
+  ProgressBar,
+  Tabs,
+  Tab,
+  Form,
+  InputGroup,
+  Modal,
 } from "react-bootstrap";
-import {
-  FaHome,
-  FaStore,
-  FaClipboardList,
-  FaHistory,
-  FaSignOutAlt,
-  FaBell,
-  FaPhone,
-  FaMapMarkedAlt,
-  FaClock,
-  FaTruck,
-  FaRegClock,
-  FaReceipt,
-} from "react-icons/fa";
-import logo from "../assets/logo.png";
-import Orderplaced from "../assets/OrderStatusImg/Orderplaced.png";
-import delivered from "../assets/OrderStatusImg/delivered.png";
-import inprogress from "../assets/OrderStatusImg/inprogress.png";
-import pickup1 from "../assets/OrderStatusImg/pickup1.png";
-import outfordelivery from "../assets/OrderStatusImg/outfordelivery.png";
-import axios from "axios"; // Make sure axios is imported
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import axios from "axios";
+import { FaRupeeSign } from "react-icons/fa";
+
+// Import clothing types data
+const clothingTypes = {
+  men: [
+    {
+      name: "Half-Sleeve Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 75,
+      },
+    },
+    {
+      name: "Half-Sleeve T-Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 75,
+      },
+    },
+    {
+      name: "Full-Sleeve T-Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 75,
+      },
+    },
+    {
+      name: "Full-Sleeve Shirt",
+      prices: {
+        "Wash & Fold": 30,
+        "Wash & Iron": 50,
+        "Steam Iron": 20,
+        "Dry Cleaning": 80,
+      },
+    },
+    {
+      name: "Jacket",
+      prices: {
+        "Wash & Fold": 140,
+        "Wash & Iron": 80,
+        "Steam Iron": 110,
+        "Dry Cleaning": 300,
+      },
+    },
+    {
+      name: "Flak Jacket",
+      prices: {
+        "Wash & Fold": 150,
+        "Wash & Iron": 80,
+        "Steam Iron": 100,
+        "Dry Cleaning": 250,
+      },
+    },
+    {
+      name: "Trousers",
+      prices: {
+        "Wash & Fold": 40,
+        "Wash & Iron": 55,
+        "Steam Iron": 30,
+        "Dry Cleaning": 140,
+      },
+    },
+    {
+      name: "Jeans",
+      prices: {
+        "Wash & Fold": 50,
+        "Wash & Iron": 60,
+        "Steam Iron": 35,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Shorts",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 45,
+        "Steam Iron": 25,
+        "Dry Cleaning": 125,
+      },
+    },
+    {
+      name: "Sweatshirt",
+      prices: {
+        "Wash & Fold": 75,
+        "Wash & Iron": 100,
+        "Steam Iron": 75,
+        "Dry Cleaning": 175,
+      },
+    },
+    {
+      name: "Trackpant",
+      prices: {
+        "Wash & Fold": 40,
+        "Wash & Iron": 60,
+        "Steam Iron": 40,
+        "Dry Cleaning": 140,
+      },
+    },
+    {
+      name: "Kurta",
+      prices: {
+        "Wash & Fold": 40,
+        "Wash & Iron": 55,
+        "Steam Iron": 25,
+        "Dry Cleaning": 125,
+      },
+    },
+  ],
+  women: [
+    {
+      name: "Half-Sleeve Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 85,
+      },
+    },
+    {
+      name: "Half-Sleeve T-Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 15,
+        "Dry Cleaning": 85,
+      },
+    },
+    {
+      name: "Full-Sleeve T-Shirt",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 75,
+      },
+    },
+    {
+      name: "Full-Sleeve Shirt",
+      prices: {
+        "Wash & Fold": 30,
+        "Wash & Iron": 50,
+        "Steam Iron": 20,
+        "Dry Cleaning": 80,
+      },
+    },
+    {
+      name: "Jacket",
+      prices: {
+        "Wash & Fold": 140,
+        "Wash & Iron": 175,
+        "Steam Iron": 150,
+        "Dry Cleaning": 300,
+      },
+    },
+    {
+      name: "Bathrobe",
+      prices: {
+        "Wash & Fold": 75,
+        "Wash & Iron": 90,
+        "Steam Iron": 70,
+        "Dry Cleaning": 125,
+      },
+    },
+    {
+      name: "Trousers",
+      prices: {
+        "Wash & Fold": 40,
+        "Wash & Iron": 60,
+        "Steam Iron": 30,
+        "Dry Cleaning": 120,
+      },
+    },
+    {
+      name: "Jeggings",
+      prices: {
+        "Wash & Fold": 50,
+        "Wash & Iron": 70,
+        "Steam Iron": 40,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Petticoat",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 110,
+      },
+    },
+    {
+      name: "Jumpsuit",
+      prices: {
+        "Wash & Fold": 75,
+        "Wash & Iron": 100,
+        "Steam Iron": 70,
+        "Dry Cleaning": 175,
+      },
+    },
+    {
+      name: "Saree",
+      prices: {
+        "Wash & Fold": 50,
+        "Wash & Iron": 90,
+        "Steam Iron": 80,
+        "Dry Cleaning": 500,
+      },
+    },
+    {
+      name: "Night Gown",
+      prices: {
+        "Wash & Fold": 50,
+        "Wash & Iron": 60,
+        "Steam Iron": 40,
+        "Dry Cleaning": 250,
+      },
+    },
+  ],
+  kids: [
+    {
+      name: "Half-Sleeve Shirt",
+      prices: {
+        "Wash & Fold": 15,
+        "Wash & Iron": 25,
+        "Steam Iron": 10,
+        "Dry Cleaning": 50,
+      },
+    },
+    {
+      name: "Half-Sleeve T-Shirt",
+      prices: {
+        "Wash & Fold": 15,
+        "Wash & Iron": 25,
+        "Steam Iron": 10,
+        "Dry Cleaning": 50,
+      },
+    },
+    {
+      name: "Trousers",
+      prices: {
+        "Wash & Fold": 20,
+        "Wash & Iron": 30,
+        "Steam Iron": 15,
+        "Dry Cleaning": 60,
+      },
+    },
+    {
+      name: "Jeans",
+      prices: {
+        "Wash & Fold": 20,
+        "Wash & Iron": 30,
+        "Steam Iron": 15,
+        "Dry Cleaning": 60,
+      },
+    },
+    {
+      name: "Frock",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 80,
+      },
+    },
+    {
+      name: "Kurta",
+      prices: {
+        "Wash & Fold": 15,
+        "Wash & Iron": 25,
+        "Steam Iron": 15,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Jumpsuit",
+      prices: {
+        "Wash & Fold": 20,
+        "Wash & Iron": 30,
+        "Steam Iron": 15,
+        "Dry Cleaning": 80,
+      },
+    },
+    {
+      name: "Sweater",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 45,
+        "Steam Iron": 25,
+        "Dry Cleaning": 100,
+      },
+    },
+    {
+      name: "Shorts",
+      prices: {
+        "Wash & Fold": 15,
+        "Wash & Iron": 25,
+        "Steam Iron": 15,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Jacket",
+      prices: {
+        "Wash & Fold": 100,
+        "Wash & Iron": 125,
+        "Steam Iron": 95,
+        "Dry Cleaning": 200,
+      },
+    },
+  ],
+  household: [
+    {
+      name: "Bedsheet",
+      prices: {
+        "Wash & Fold": 50,
+        "Wash & Iron": 60,
+        "Steam Iron": 40,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Blanket",
+      prices: {
+        "Wash & Fold": 100,
+        "Wash & Iron": 120,
+        "Steam Iron": 90,
+        "Dry Cleaning": 200,
+      },
+    },
+    {
+      name: "Curtain",
+      prices: {
+        "Wash & Fold": 40,
+        "Wash & Iron": 50,
+        "Steam Iron": 30,
+        "Dry Cleaning": 240,
+      },
+    },
+    {
+      name: "Pillow Cover",
+      prices: {
+        "Wash & Fold": 20,
+        "Wash & Iron": 30,
+        "Steam Iron": 20,
+        "Dry Cleaning": 80,
+      },
+    },
+    {
+      name: "Duvet",
+      prices: {
+        "Wash & Fold": 120,
+        "Wash & Iron": 130,
+        "Steam Iron": 110,
+        "Dry Cleaning": 250,
+      },
+    },
+    {
+      name: "Table Cloth",
+      prices: {
+        "Wash & Fold": 35,
+        "Wash & Iron": 45,
+        "Steam Iron": 25,
+        "Dry Cleaning": 150,
+      },
+    },
+    {
+      name: "Carpet",
+      prices: {
+        "Wash & Fold": 150,
+        "Wash & Iron": 160,
+        "Steam Iron": 120,
+        "Dry Cleaning": 250,
+      },
+    },
+    {
+      name: "Cushion Cover",
+      prices: {
+        "Wash & Fold": 30,
+        "Wash & Iron": 40,
+        "Steam Iron": 20,
+        "Dry Cleaning": 90,
+      },
+    },
+    {
+      name: "Towel",
+      prices: {
+        "Wash & Fold": 25,
+        "Wash & Iron": 35,
+        "Steam Iron": 20,
+        "Dry Cleaning": 60,
+      },
+    },
+    {
+      name: "Sofa Cover",
+      prices: {
+        "Wash & Fold": 80,
+        "Wash & Iron": 90,
+        "Steam Iron": 70,
+        "Dry Cleaning": 280,
+      },
+    },
+  ],
+};
 
 const OrderStatus = () => {
-  // URL parameters - get orderId if passed
-  const { orderId } = useParams();
-
-  // State for orders and current order
-  const [orders, setOrders] = useState([]);
-  const [currentOrder, setCurrentOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // State for order data
+  const [orderData, setOrderData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [orderIdInput, setOrderIdInput] = useState("");
+  const [activeTab, setActiveTab] = useState("details");
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
-  // Real-time tracking state
-  const [activeStatus, setActiveStatus] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [estimatedDeliveryTime, setEstimatedDeliveryTime] = useState(null);
-  const [remainingTime, setRemainingTime] = useState({});
-  const [showPriceModal, setShowPriceModal] = useState(false);
+  // Edit delivery state
+  const [isEditingDelivery, setIsEditingDelivery] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [deliveryInfo, setDeliveryInfo] = useState({
+    address: "",
+    date: "",
+    time: "",
+  });
+  const [updating, setUpdating] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState(null);
 
-  const navigate = useNavigate();
+  // Sample status steps for the order process
+  const orderStatuses = [
+    { id: "placed", label: "Order Placed", color: "primary" },
+    { id: "confirmed", label: "Order Confirmed", color: "info" },
+    { id: "pickup", label: "Picked Up", color: "secondary" },
+    { id: "processing", label: "Processing", color: "warning" },
+    { id: "ready", label: "Ready for Delivery", color: "info" },
+    { id: "delivered", label: "Delivered", color: "success" },
+    { id: "cancelled", label: "Cancelled", color: "danger" },
+  ];
 
-  // Fetch orders from database
+  // Initialize delivery edit information when order data changes
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-
-        // Get user token from localStorage
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Not authenticated");
-        }
-
-        // API call to fetch user's orders
-        const response = await axios.get("/api/orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.data && response.data.orders) {
-          setOrders(response.data.orders);
-
-          // If orderId is provided in URL params, find that specific order
-          if (orderId) {
-            const order = response.data.orders.find(
-              (o) => o._id === orderId || o.orderId === orderId
-            );
-            if (order) {
-              setCurrentOrder(order);
-            } else {
-              // If order not found, use the most recent active order
-              const activeOrders = response.data.orders.filter(
-                (o) => o.status !== "Delivered" && o.status !== "Cancelled"
-              );
-              if (activeOrders.length > 0) {
-                setCurrentOrder(activeOrders[0]);
-              } else if (response.data.orders.length > 0) {
-                // Fallback to most recent order
-                setCurrentOrder(response.data.orders[0]);
-              }
-            }
-          } else if (response.data.orders.length > 0) {
-            // Default to most recent order if no orderId specified
-            const activeOrders = response.data.orders.filter(
-              (o) => o.status !== "Delivered" && o.status !== "Cancelled"
-            );
-            if (activeOrders.length > 0) {
-              setCurrentOrder(activeOrders[0]);
-            } else {
-              setCurrentOrder(response.data.orders[0]);
-            }
-          }
-        }
-
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError(err.message || "Failed to fetch orders");
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [orderId]);
-
-  // Update tracking info based on current order
-  useEffect(() => {
-    if (currentOrder) {
-      // Map order status to activeStatus index
-      const statusMapping = {
-        "Order Placed": 0,
-        "Order Pickup": 1,
-        "In Process": 2,
-        "Out for Delivery": 3,
-        Delivered: 4,
-      };
-
-      // Set active status based on current order status
-      const status = currentOrder.status || "Order Placed";
-      setActiveStatus(statusMapping[status] || 0);
-
-      // Calculate progress percentage based on status
-      const progressMapping = {
-        "Order Placed": 10,
-        "Order Pickup": 30,
-        "In Process": 55,
-        "Out for Delivery": 80,
-        Delivered: 100,
-      };
-      setProgress(progressMapping[status] || 10);
-
-      // Parse deliveryDate to set estimated delivery time
-      if (currentOrder.deliveryDate) {
-        const deliveryDate = new Date(currentOrder.deliveryDate);
-        setEstimatedDeliveryTime(deliveryDate);
-      }
-    }
-  }, [currentOrder]);
-
-  // Set up time tracking
-  useEffect(() => {
-    // Update current time every minute
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  // Calculate remaining time
-  useEffect(() => {
-    if (estimatedDeliveryTime) {
-      const updateRemainingTime = () => {
-        const diff = estimatedDeliveryTime - new Date();
-        if (diff > 0) {
-          const hours = Math.floor(diff / (1000 * 60 * 60));
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          setRemainingTime({ hours, minutes });
-        } else {
-          setRemainingTime({ hours: 0, minutes: 0 });
-        }
-      };
-
-      updateRemainingTime();
-      const interval = setInterval(updateRemainingTime, 60000);
-      return () => clearInterval(interval);
-    }
-  }, [estimatedDeliveryTime, currentTime]);
-
-  // Create status steps based on current order
-  const getStatusSteps = () => {
-    if (!currentOrder) return [];
-
-    const orderDate = new Date(
-      currentOrder.createdAt || currentOrder.orderedDate
-    );
-    const deliveryDate = new Date(currentOrder.deliveryDate);
-
-    // Format dates for display
-    const formatDate = (date) => {
-      return date
-        .toLocaleDateString("en-US", {
-          day: "2-digit",
-          month: "short",
-        })
-        .replace(",", "");
-    };
-
-    // Format times for display
-    const formatTime = (date) => {
-      return date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
+    if (orderData) {
+      setDeliveryInfo({
+        address: orderData.deliveryAddress,
+        date: orderData.deliveryDate,
+        time: orderData.deliveryTime,
       });
-    };
-
-    // Calculate intermediate times
-    const pickupTime = new Date(currentOrder.pickupTime || orderDate);
-    pickupTime.setHours(pickupTime.getHours() + 4);
-
-    const processTime = new Date(pickupTime);
-    processTime.setHours(processTime.getHours() + 3);
-
-    const outForDeliveryTime = new Date(deliveryDate);
-    outForDeliveryTime.setHours(outForDeliveryTime.getHours() - 2);
-
-    // Check if status is active or completed
-    const isCompleted = (stepIndex) => stepIndex < activeStatus;
-    const isActive = (stepIndex) => stepIndex === activeStatus;
-
-    return [
-      {
-        id: 1,
-        name: "Order Placed",
-        icon: Orderplaced,
-        time: `${formatDate(orderDate)}, ${formatTime(orderDate)}`,
-        desc: "Order received",
-        completed: isCompleted(0),
-        active: isActive(0),
-      },
-      {
-        id: 2,
-        name: "Order Pickup",
-        icon: pickup1,
-        time: `${formatDate(pickupTime)}, ${formatTime(pickupTime)}`,
-        desc: "Items collected",
-        completed: isCompleted(1),
-        active: isActive(1),
-      },
-      {
-        id: 3,
-        name: "In Process",
-        icon: inprogress,
-        time: `${formatDate(processTime)}, ${formatTime(processTime)}`,
-        desc: "Cleaning in progress",
-        completed: isCompleted(2),
-        active: isActive(2),
-      },
-      {
-        id: 4,
-        name: "Out for Delivery",
-        icon: outfordelivery,
-        time: `${formatDate(outForDeliveryTime)}, ${formatTime(
-          outForDeliveryTime
-        )}`,
-        desc: "On the way",
-        completed: isCompleted(3),
-        active: isActive(3),
-      },
-      {
-        id: 5,
-        name: "Delivered",
-        icon: delivered,
-        time: `${formatDate(deliveryDate)}, ${formatTime(deliveryDate)}`,
-        desc: "Completed",
-        completed: isCompleted(4),
-        active: isActive(4),
-      },
-    ];
-  };
-
-  // Generate status updates based on current order
-  const getStatusUpdates = () => {
-    if (!currentOrder) return [];
-
-    const statusSteps = getStatusSteps();
-
-    return statusSteps.map((step, index) => {
-      let status = "pending";
-      if (step.completed) status = "complete";
-      if (step.active) status = "active";
-
-      return {
-        time: step.time.split(", ")[1], // Just the time portion
-        message: getUpdateMessage(step.name),
-        status: status,
-      };
-    });
-  };
-
-  // Get appropriate message for each status
-  const getUpdateMessage = (status) => {
-    switch (status) {
-      case "Order Placed":
-        return "Order placed successfully";
-      case "Order Pickup":
-        return "Pickup agent collected your clothes";
-      case "In Process":
-        return "Clothes are now being processed";
-      case "Out for Delivery":
-        return "Clothes are out for delivery";
-      case "Delivered":
-        return "Order has been delivered";
-      default:
-        return "Status updated";
     }
-  };
+  }, [orderData]);
 
-  // Format time display
-  const formatTimeDisplay = (date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+  // Auto-update order status based on time
+  useEffect(() => {
+    if (orderData) {
+      calculateCurrentStatus();
 
-  // Format date for display (e.g., "15-Mar-2025")
-  const formatDateDisplay = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "short" });
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+      // Set up interval to periodically check and update status
+      const statusInterval = setInterval(calculateCurrentStatus, 60000); // Check every minute
 
-  // Price breakdown data
-  const getPriceData = () => {
-    if (!currentOrder || !currentOrder.items) {
-      // Default price data
-      return {
-        serviceType: "Dry Cleaning",
-        clothingItems: {
-          tops: {
-            Shirt: 3,
-            "T-Shirt": 1,
-          },
-          bottoms: {
-            Trousers: 2,
-          },
-        },
-        prices: {
-          tops: {
-            Shirt: 3.5,
-            "T-Shirt": 2.75,
-          },
-          bottoms: {
-            Trousers: 4.5,
-          },
-        },
-      };
+      return () => clearInterval(statusInterval);
     }
+  }, [orderData]);
 
-    // Convert API items to price data format
-    const clothingItems = {};
-    const prices = {};
+  // Function to calculate current status based on time intervals
+  const calculateCurrentStatus = () => {
+    if (!orderData) return;
 
-    currentOrder.items.forEach((item) => {
-      // Create category if it doesn't exist
-      if (!clothingItems[item.category]) {
-        clothingItems[item.category] = {};
-        prices[item.category] = {};
+    const now = new Date();
+    const pickupDate = new Date(orderData.pickupDate);
+    const deliveryDate = new Date(orderData.deliveryDate);
+
+    // Parse pickup and delivery time ranges
+    const pickupTimeRange = parseTimeRange(orderData.pickupTime);
+    const deliveryTimeRange = parseTimeRange(orderData.deliveryTime);
+
+    // Set pickup date hours based on time range
+    const pickupStart = new Date(pickupDate);
+    pickupStart.setHours(
+      pickupTimeRange.start.hours,
+      pickupTimeRange.start.minutes
+    );
+
+    const pickupEnd = new Date(pickupDate);
+    pickupEnd.setHours(pickupTimeRange.end.hours, pickupTimeRange.end.minutes);
+
+    // Set delivery date hours based on time range
+    const deliveryStart = new Date(deliveryDate);
+    deliveryStart.setHours(
+      deliveryTimeRange.start.hours,
+      deliveryTimeRange.start.minutes
+    );
+
+    const deliveryEnd = new Date(deliveryDate);
+    deliveryEnd.setHours(
+      deliveryTimeRange.end.hours,
+      deliveryTimeRange.end.minutes
+    );
+
+    // Calculate the time interval between pickup and delivery
+    const totalProcessTime = deliveryStart.getTime() - pickupEnd.getTime();
+    const processingMidpoint = new Date(
+      pickupEnd.getTime() + totalProcessTime * 0.3
+    );
+    const readyForDeliveryTime = new Date(
+      pickupEnd.getTime() + totalProcessTime * 0.7
+    );
+
+    let newStatus = orderData.status;
+
+    // Make sure statusHistory is an array
+    let statusHistory = Array.isArray(orderData.statusHistory)
+      ? [...orderData.statusHistory]
+      : [];
+
+    // Update the status based on current time
+    if (now < pickupStart) {
+      if (newStatus !== "confirmed") {
+        newStatus = "confirmed";
+        addStatusHistoryIfNeeded(
+          statusHistory,
+          newStatus,
+          "Your order has been confirmed. Pickup scheduled."
+        );
       }
+    } else if (now >= pickupStart && now <= pickupEnd) {
+      if (newStatus !== "pickup") {
+        newStatus = "pickup";
+        addStatusHistoryIfNeeded(
+          statusHistory,
+          newStatus,
+          "Your laundry has been picked up by our delivery agent."
+        );
+      }
+    } else if (now > pickupEnd && now <= processingMidpoint) {
+      if (newStatus !== "processing") {
+        newStatus = "processing";
+        addStatusHistoryIfNeeded(
+          statusHistory,
+          newStatus,
+          "Your clothes are being processed at our facility."
+        );
+      }
+    } else if (now > processingMidpoint && now <= readyForDeliveryTime) {
+      if (newStatus !== "ready") {
+        newStatus = "ready";
+        addStatusHistoryIfNeeded(
+          statusHistory,
+          newStatus,
+          "Your laundry is ready for delivery."
+        );
+      }
+    } else if (now > deliveryEnd) {
+      if (newStatus !== "delivered") {
+        newStatus = "delivered";
+        addStatusHistoryIfNeeded(
+          statusHistory,
+          newStatus,
+          "Your laundry has been delivered successfully."
+        );
+      }
+    }
 
-      // Add item to category
-      clothingItems[item.category][item.name] = item.quantity;
-      prices[item.category][item.name] = item.pricePerItem;
-    });
+    // Update order data if status has changed
+    if (
+      newStatus !== orderData.status ||
+      statusHistory.length !== (orderData.statusHistory?.length || 0)
+    ) {
+      setOrderData({
+        ...orderData,
+        status: newStatus,
+        statusHistory: statusHistory,
+      });
+    }
+  };
+
+  // Helper function to parse time range like "9 AM - 12 PM"
+  const parseTimeRange = (timeString) => {
+    const [startTime, endTime] = timeString.split(" - ");
 
     return {
-      serviceType: currentOrder.serviceType || "Dry Cleaning",
-      clothingItems,
-      prices,
+      start: parseTime(startTime),
+      end: parseTime(endTime),
     };
   };
 
-  // Calculate prices
-  const getCurrentPrice = (section, itemName) => {
-    const priceData = getPriceData();
-    return priceData.prices[section][itemName];
+  // Helper function to parse time like "9 AM" or "3 PM"
+  const parseTime = (timeStr) => {
+    const isPM = timeStr.includes("PM");
+    const hourStr = timeStr.replace(/\s?[AP]M/, "");
+    let hours = parseInt(hourStr);
+
+    if (isPM && hours < 12) hours += 12;
+    if (!isPM && hours === 12) hours = 0;
+
+    return { hours, minutes: 0 };
   };
 
-  // Calculate total price
-  const calculateTotalPrice = () => {
-    if (currentOrder && currentOrder.totalPrice) {
-      return currentOrder.totalPrice;
+  // Helper function to add status to history if it doesn't exist
+  const addStatusHistoryIfNeeded = (history, status, message) => {
+    const statusExists = history.some((item) => item.status === status);
+
+    if (!statusExists) {
+      history.push({
+        status,
+        timestamp: new Date().toISOString(),
+        message,
+      });
     }
 
-    const priceData = getPriceData();
-    return Object.entries(priceData.clothingItems || {}).reduce(
-      (total, [section, items]) => {
-        return (
-          total +
-          Object.entries(items || {}).reduce(
-            (sectionTotal, [itemName, count]) => {
-              return sectionTotal + count * getCurrentPrice(section, itemName);
-            },
-            0
-          )
+    return history;
+  };
+
+  // Function to fetch order data
+  const fetchOrderData = useCallback(async (orderId) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Replace with actual API endpoint for order status
+      const response = await axios.get(
+        `http://localhost:8080/api/pickups/${orderId}`
+      );
+
+      // If pricing data doesn't exist, generate it
+      let orderWithPricing = { ...response.data };
+
+      if (!orderWithPricing.priceBreakdown) {
+        const breakdown = generatePriceBreakdown(
+          orderWithPricing.clothingItems,
+          orderWithPricing.serviceType
         );
-      },
-      0
-    );
+
+        // Calculate total price
+        const totalPrice = breakdown.reduce((sum, item) => sum + item.total, 0);
+
+        orderWithPricing.priceBreakdown = breakdown;
+        orderWithPricing.totalPrice = totalPrice;
+      }
+
+      setOrderData(orderWithPricing);
+    } catch (err) {
+      console.error("Error fetching order:", err);
+      console.error("Response status:", err.response?.status);
+      console.error("Response data:", err.response?.data);
+      setError(
+        `Unable to fetch order: ${
+          err.response?.data?.message || err.message || "Unknown error"
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Handle search submission
+  const handleSearchOrder = (e) => {
+    e.preventDefault();
+    if (orderIdInput.trim()) {
+      fetchOrderData(orderIdInput.trim());
+    }
   };
 
-  const handleLogout = () => {
-    // Clear auth data
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("isLoggedIn");
-    sessionStorage.clear();
-    sessionStorage.removeItem("historyReplaced");
+  // Function to handle delivery details update
+  const handleUpdateDelivery = async () => {
+    setUpdating(true);
+    setUpdateMessage(null);
 
-    // Clear history and force redirect
-    window.history.go(-(window.history.length - 1));
-    window.location.href = "/Login";
+    try {
+      // Validate input
+      if (
+        !deliveryInfo.address.trim() ||
+        !deliveryInfo.date ||
+        !deliveryInfo.time
+      ) {
+        throw new Error("Please fill in all delivery details");
+      }
+
+      // Check if delivery date is in the future
+      const deliveryDate = new Date(deliveryInfo.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (deliveryDate < today) {
+        throw new Error("Delivery date must be in the future");
+      }
+
+      // Try to update on the server
+      await axios.patch(
+        `http://localhost:8080/api/pickups/${orderData.orderId}`,
+        {
+          deliveryAddress: deliveryInfo.address,
+          deliveryDate: deliveryInfo.date,
+          deliveryTime: deliveryInfo.time,
+        }
+      );
+
+      // Simulate API call success - update local state
+      setOrderData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          deliveryAddress: deliveryInfo.address,
+          deliveryDate: deliveryInfo.date,
+          deliveryTime: deliveryInfo.time,
+          statusHistory: [
+            ...(Array.isArray(prevData.statusHistory)
+              ? prevData.statusHistory
+              : []),
+            {
+              status: prevData.status,
+              timestamp: new Date().toISOString(),
+              message: "Delivery details updated by customer.",
+            },
+          ],
+        };
+
+        // Recalculate status after delivery date change
+        setTimeout(calculateCurrentStatus, 100);
+
+        return updatedData;
+      });
+
+      setUpdateMessage({
+        type: "success",
+        text: "Delivery details updated successfully!",
+      });
+
+      // Close modal after a short delay
+      setTimeout(() => {
+        setShowEditModal(false);
+        setUpdateMessage(null);
+      }, 2000);
+    } catch (err) {
+      console.error("Error updating delivery:", err);
+      setUpdateMessage({
+        type: "danger",
+        text:
+          err.message || "Failed to update delivery details. Please try again.",
+      });
+    } finally {
+      setUpdating(false);
+    }
   };
 
-  // Loading state
-  if (loading) {
+  const handleCancelOrder = async () => {
+    setUpdating(true);
+    try {
+      // API call to cancel order
+      await axios.delete(
+        `http://localhost:8080/api/pickups/${orderData.orderId}/cancel`,
+        { status: "cancelled" }
+      );
+
+      // Update local state
+      setOrderData((prevData) => ({
+        ...prevData,
+        status: "cancelled",
+        statusHistory: [
+          ...(Array.isArray(prevData.statusHistory)
+            ? prevData.statusHistory
+            : []),
+          {
+            status: "cancelled",
+            timestamp: new Date().toISOString(),
+            message: "Order cancelled by customer.",
+          },
+        ],
+      }));
+
+      setShowCancelModal(false);
+      // Show success message
+    } catch (err) {
+      console.error("Error cancelling order:", err);
+      // Show error message
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // Check if order is editable (only before delivery)
+  const isOrderEditable = (status) => {
+    const nonEditableStatuses = ["delivered", "cancelled"];
+    return !nonEditableStatuses.includes(status);
+  };
+
+  // Function to get current status index
+  const getCurrentStatusIndex = (status) => {
+    return orderStatuses.findIndex((s) => s.id === status);
+  };
+
+  // Helper function to find an item's price based on service type
+  const findItemPrice = (category, itemName, serviceType) => {
+    const categoryItems = clothingTypes[category] || [];
+    const itemData = categoryItems.find((item) => item.name === itemName);
+
+    if (itemData && itemData.prices && itemData.prices[serviceType]) {
+      return itemData.prices[serviceType];
+    }
+
+    // Default price if not found
+    return 50;
+  };
+
+  // Enhanced function to generate price breakdown from clothing items
+  const generatePriceBreakdown = (clothingItems, serviceType) => {
+    const breakdown = [];
+    let itemsTotal = 0;
+
+    // Process all categories
+    Object.entries(clothingItems).forEach(([category, items]) => {
+      Object.entries(items).forEach(([itemName, count]) => {
+        if (count > 0) {
+          const unitPrice = findItemPrice(category, itemName, serviceType);
+          const total = unitPrice * count;
+          itemsTotal += total;
+
+          breakdown.push({
+            item: itemName,
+            count,
+            unitPrice,
+            total,
+          });
+        }
+      });
+    });
+
+    // Add service fee (base 50 + 10% of items total)
+    const serviceFee = 50 + Math.round(itemsTotal * 0.1);
+    breakdown.push({
+      item: "Service Fee",
+      count: 1,
+      unitPrice: serviceFee,
+      total: serviceFee,
+    });
+
+    return breakdown;
+  };
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Helper function to format timestamp
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+
+  // Generate status steps
+  const renderStatusSteps = () => {
+    if (!orderData) return null;
+
+    const currentIndex = getCurrentStatusIndex(orderData.status);
+
     return (
-      <div className="d-flex min-vh-100 justify-content-center align-items-center">
-        <Spinner animation="border" variant="primary" />
-        <span className="ms-2">Loading order details...</span>
-      </div>
-    );
-  }
+      <div className="status-tracker mb-4">
+        <ProgressBar
+          now={(currentIndex / (orderStatuses.length - 1)) * 100}
+          className="mb-3"
+          variant="info"
+        />
 
-  // Error state
-  if (error) {
-    return (
-      <div className="d-flex min-vh-100 justify-content-center align-items-center">
-        <Alert variant="danger">
-          <Alert.Heading>Error Loading Orders</Alert.Heading>
-          <p>{error}</p>
-          <Button variant="primary" onClick={() => navigate("/HomePage")}>
-            Back to Home
-          </Button>
-        </Alert>
-      </div>
-    );
-  }
+        <Row className="text-center status-steps">
+          {orderStatuses.map((status, index) => {
+            const isActive = index <= currentIndex;
+            const isCurrent = index === currentIndex;
 
-  // No orders state
-  if (!currentOrder) {
-    return (
-      <div className="d-flex min-vh-100 justify-content-center align-items-center">
-        <Alert variant="info">
-          <Alert.Heading>No Active Orders</Alert.Heading>
-          <p>You don't have any active orders right now.</p>
-          <Button variant="primary" onClick={() => navigate("/Stores")}>
-            Find a Store
-          </Button>
-        </Alert>
-      </div>
-    );
-  }
-
-  // Get status steps and updates based on current order
-  const statusSteps = getStatusSteps();
-  const updates = getStatusUpdates();
-
-  return (
-    <div className="app-container d-flex">
-      {/* Sidebar - Keeping original design */}
-      <Col
-        xs={3}
-        md={3}
-        lg={2}
-        className="p-0 min-vh-100"
-        style={{ backgroundColor: "#daf5ff" }}
-      >
-        <div className="d-flex flex-column h-100">
-          <div className="p-2 text-start">
-            <Image
-              src={logo}
-              alt="Bachelor's Dhobi Logo"
-              fluid
-              style={{ maxWidth: "150px" }}
-            />
-          </div>
-
-          <Nav className="flex-column mt-4">
-            <Nav.Link
-              href="/HomePage"
-              className="p-3 d-flex align-items-center text-dark"
-            >
-              <FaHome className="me-3" size={20} /> Home
-            </Nav.Link>
-            <Nav.Link
-              href="/Stores"
-              className="p-3 d-flex align-items-center text-dark"
-            >
-              <FaStore className="me-3" size={20} /> Stores
-            </Nav.Link>
-            <Nav.Link
-              href="/OrderStatus"
-              className="p-3 d-flex align-items-center text-dark"
-            >
-              <FaClipboardList className="me-3" size={20} /> Orders
-            </Nav.Link>
-            <Nav.Link
-              href="/HistoryPage"
-              className="p-3 d-flex align-items-center text-dark"
-            >
-              <FaHistory className="me-3" size={20} /> History
-            </Nav.Link>
-          </Nav>
-
-          <div className="mt-auto p-3">
-            <Button
-              onClick={handleLogout}
-              variant="dark"
-              className="w-100 d-flex align-items-center justify-content-center rounded-4"
-            >
-              <FaSignOutAlt className="me-2" /> Logout
-            </Button>
-          </div>
-        </div>
-      </Col>
-
-      {/* Main Content */}
-      <Col xs={9} md={9} lg={10} className="px-4 py-4 bg-light">
-        {/* Header with live time */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h1 className="fw-bold" style={{ color: "#1a3a78" }}>
-              Live Order Tracking
-            </h1>
-            <p className="text-muted mb-0">
-              Follow your laundry's journey in real-time
-            </p>
-          </div>
-          <div className="text-end">
-            <div className="d-flex align-items-center">
-              <FaRegClock className="me-2 text-primary" />
-              <span className="fw-bold">{formatTimeDisplay(currentTime)}</span>
-            </div>
-            <p className="text-muted mb-0">Updated just now</p>
-          </div>
-        </div>
-
-        {/* Order ID and Quick Info Bar */}
-        <div className="bg-white rounded-4 shadow-sm p-3 mb-4 d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center">
-            <Badge bg="primary" className="me-2 p-2 rounded-circle">
-              <FaClipboardList />
-            </Badge>
-            <div>
-              <h5 className="mb-0 fw-bold">
-                {currentOrder.orderId || `#${currentOrder._id.substring(0, 8)}`}
-              </h5>
-              <p className="mb-0 text-muted small">
-                {currentOrder.items?.length || 0} Items
-              </p>
-            </div>
-          </div>
-
-          <div className="d-flex align-items-center">
-            <Badge
-              bg={currentOrder.status === "In Process" ? "warning" : "primary"}
-              text={currentOrder.status === "In Process" ? "dark" : "white"}
-              className="me-2 p-2"
-            >
-              {currentOrder.status || "In Process"}
-            </Badge>
-            <div className="mx-3 text-center">
-              <p className="mb-0 small text-muted">Estimated Delivery</p>
-              <p className="mb-0 fw-bold">
-                {formatDateDisplay(currentOrder.deliveryDate)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <Row>
-          {/* Left Column - Status Timeline */}
-          <Col lg={8} className="mb-4">
-            <div className="bg-white rounded-4 shadow-sm p-4">
-              {/* Real-time progress */}
-              <div className="mb-4 position-relative">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h6 className="mb-0 fw-bold">Overall Progress</h6>
-                  <div className="d-flex align-items-center">
-                    <FaClock className="text-primary me-1" size={14} />
-                    <span className="text-primary fw-bold">
-                      {remainingTime.hours}h {remainingTime.minutes}m remaining
-                    </span>
-                  </div>
-                </div>
-                <ProgressBar
-                  now={progress}
-                  variant="primary"
-                  className="rounded-pill"
-                  style={{ height: "10px" }}
-                />
-                <div className="d-flex justify-content-between mt-1">
-                  <span className="small text-muted">Order Placed</span>
-                  <span className="small text-muted">Delivery</span>
-                </div>
-
-                {/* Live update badge */}
+            return (
+              <Col key={status.id}>
                 <div
-                  className="position-absolute"
+                  className={`status-point ${isActive ? "active" : ""} ${
+                    isCurrent ? "current" : ""
+                  }`}
                   style={{
-                    left: `${progress}%`,
-                    top: "0",
-                    transform: "translateX(-50%)",
+                    opacity: isActive ? 1 : 0.5,
+                    fontWeight: isCurrent ? "bold" : "normal",
                   }}
                 >
-                  <div className="d-flex flex-column align-items-center">
-                    <Badge
-                      pill
-                      bg="primary"
-                      className="px-2 py-1"
-                      style={{
-                        marginBottom: "-8px",
-                        animation: "pulse 1.5s infinite",
-                      }}
-                    >
-                      LIVE
-                    </Badge>
-                  </div>
+                  <Badge
+                    bg={isActive ? status.color : "secondary"}
+                    className="p-2 mb-2"
+                  >
+                    {index + 1}
+                  </Badge>
+                  <div>{status.label}</div>
                 </div>
-              </div>
-
-              {/* Status timeline */}
-              <div className="status-timeline position-relative mt-5">
-                {statusSteps.map((step, index) => (
-                  <div key={step.id} className="d-flex mb-4">
-                    {/* Status Icon */}
-                    <div
-                      className={`status-icon-container rounded-circle d-flex justify-content-center align-items-center ${
-                        step.completed
-                          ? "bg-success"
-                          : step.active
-                          ? "bg-primary"
-                          : "bg-light"
-                      }`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        border: step.active
-                          ? "2px solid #0d6efd"
-                          : "1px solid #dee2e6",
-                        boxShadow: step.active
-                          ? "0 0 10px rgba(13, 110, 253, 0.4)"
-                          : "none",
-                        zIndex: 2,
-                        position: "relative",
-                      }}
-                    >
-                      <img
-                        src={step.icon}
-                        alt={step.name}
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          filter:
-                            step.completed || step.active
-                              ? "brightness(10)"
-                              : "none",
-                        }}
-                      />
-
-                      {step.active && (
-                        <div
-                          className="position-absolute"
-                          style={{
-                            width: "60px",
-                            height: "60px",
-                            borderRadius: "50%",
-                            border: "2px solid #0d6efd",
-                            opacity: 0.5,
-                            animation: "pulse 2s infinite",
-                          }}
-                        ></div>
-                      )}
-                    </div>
-
-                    {/* Status content */}
-                    <div className="status-content ms-3 flex-grow-1">
-                      <div className="d-flex justify-content-between">
-                        <h6
-                          className={`fw-bold mb-0 ${
-                            step.active ? "text-primary" : ""
-                          }`}
-                        >
-                          {step.name}
-                        </h6>
-                        <span
-                          className={`small ${
-                            step.completed
-                              ? "text-success"
-                              : step.active
-                              ? "text-primary"
-                              : "text-muted"
-                          }`}
-                        >
-                          {step.time}
-                        </span>
-                      </div>
-                      <p className="mb-0 text-muted small">{step.desc}</p>
-
-                      {step.active && (
-                        <div className="mt-2 text-primary small fw-bold d-flex align-items-center">
-                          <span className="me-2">In progress</span>
-                          <div
-                            className="spinner-grow spinner-grow-sm text-primary"
-                            role="status"
-                          >
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Connecting line */}
-                    {index < statusSteps.length - 1 && (
-                      <div
-                        className="position-absolute"
-                        style={{
-                          left: "25px",
-                          top: `${index * 80 + 50}px`,
-                          width: "2px",
-                          height: "30px",
-                          background: step.completed ? "#198754" : "#dee2e6",
-                          zIndex: 1,
-                        }}
-                      ></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Col>
-
-          {/* Right Column - Order Details & Notifications */}
-          <Col lg={4}>
-            {/* Order Details Card */}
-            <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-              <h5 className="fw-bold mb-3">Order Details</h5>
-
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <p className="mb-0 text-muted small">Customer</p>
-                  <p className="mb-0 fw-bold">{currentOrder.customerName}</p>
-                </div>
-                <div>
-                  <p className="mb-0 text-muted small">Service Type</p>
-                  <p className="mb-0 fw-bold">{currentOrder.serviceType}</p>
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <p className="mb-0 text-muted small">Ordered Date</p>
-                  <p className="mb-0 fw-bold">
-                    {formatDateDisplay(
-                      currentOrder.createdAt || currentOrder.orderedDate
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="mb-0 text-muted small">Delivery Date</p>
-                  <p className="mb-0 fw-bold">
-                    {formatDateDisplay(currentOrder.deliveryDate)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <p className="mb-1 text-muted small">Delivery Address</p>
-                <div className="d-flex align-items-start">
-                  <FaMapMarkedAlt className="text-primary me-2 mt-1" />
-                  <p className="mb-0 small">{currentOrder.address}</p>
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <p className="mb-1 text-muted small">Store Contact</p>
-                <div className="d-flex align-items-center">
-                  <FaPhone className="text-primary me-2" />
-                  <p className="mb-0">
-                    {currentOrder.storePhone || "080-12345678"}
-                  </p>
-                </div>
-              </div>
-
-              {currentOrder.notes && (
-                <div className="p-3 bg-light rounded-3 small">
-                  <p className="mb-1 fw-bold">Note from Store:</p>
-                  <p className="mb-0 text-muted">{currentOrder.notes}</p>
-                </div>
-              )}
-
-              <div className="mt-3 d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="mb-0 text-muted small">Total Price</p>
-                  <p className="mb-0 fw-bold">
-                    ₹{calculateTotalPrice().toFixed(2)}
-                  </p>
-                </div>
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  className="rounded-pill"
-                  onClick={() => setShowPriceModal(true)}
-                >
-                  <FaReceipt className="me-1" /> View Breakdown
-                </Button>
-              </div>
-            </div>
-
-            {/* Notification Updates */}
-            <div className="bg-white rounded-4 shadow-sm p-4">
-              <h5 className="fw-bold mb-3">Updates</h5>
-
-              <div className="notification-timeline position-relative">
-                {updates.map((update, index) => (
-                  <div key={index} className="d-flex mb-3">
-                    <div
-                      className={`notification-dot rounded-circle d-flex justify-content-center align-items-center ${
-                        update.status === "complete"
-                          ? "bg-success"
-                          : update.status === "active"
-                          ? "bg-primary"
-                          : "bg-light"
-                      }`}
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        border:
-                          update.status === "active"
-                            ? "2px solid #0d6efd"
-                            : "1px solid #dee2e6",
-                        zIndex: 2,
-                        position: "relative",
-                      }}
-                    >
-                      {update.status === "complete" && (
-                        <FaBell style={{ color: "white", fontSize: "12px" }} />
-                      )}
-                      {update.status === "active" && (
-                        <>
-                          <FaBell
-                            style={{ color: "white", fontSize: "12px" }}
-                          />
-                          <div
-                            className="position-absolute"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "50%",
-                              border: "2px solid #0d6efd",
-                              opacity: 0.5,
-                              animation: "pulse 2s infinite",
-                            }}
-                          ></div>
-                        </>
-                      )}
-                    </div>
-
-                    <div className="notification-content ms-3 flex-grow-1">
-                      <div className="d-flex justify-content-between">
-                        <p
-                          className={`mb-0 small ${
-                            update.status === "active" ? "fw-bold" : ""
-                          }`}
-                        >
-                          {update.message}
-                        </p>
-                        <span className="text-muted small">{update.time}</span>
-                      </div>
-                      {update.status === "active" && (
-                        <span className="badge bg-primary text-white mt-1">
-                          Now
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Connecting line */}
-                    {index < updates.length - 1 && (
-                      <div
-                        className="position-absolute"
-                        style={{
-                          left: "15px",
-                          top: `${index * 60 + 25}px`,
-                          width: "2px",
-                          height: "40px",
-                          background:
-                            update.status === "complete"
-                              ? "#198754"
-                              : "#dee2e6",
-                          zIndex: 1,
-                        }}
-                      ></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Col>
+              </Col>
+            );
+          })}
         </Row>
+      </div>
+    );
+  };
 
-        {/* Price Breakdown Modal */}
-        <Modal
-          show={showPriceModal}
-          onHide={() => setShowPriceModal(false)}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Price Breakdown</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p className="text-muted small">
-              Service Type: {getPriceData().serviceType}
-            </p>
+  // Render price breakdown
+  const renderPriceBreakdown = () => {
+    if (!orderData || !orderData.priceBreakdown) return null;
 
-            {Object.entries(getPriceData().clothingItems || {}).map(
-              ([section, items]) => (
-                <div key={section} className="mb-3">
-                  <h6 className="text-capitalize">{section}</h6>
-                  <table className="table table-sm">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Item</th>
-                        <th className="text-center">Qty</th>
-                        <th className="text-end">Price</th>
-                        <th className="text-end">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(items || {}).map(([itemName, count]) => (
-                        <tr key={itemName}>
-                          <td>{itemName}</td>
-                          <td className="text-center">{count}</td>
-                          <td className="text-end">
-                            ₹{getCurrentPrice(section, itemName).toFixed(2)}
-                          </td>
-                          <td className="text-end">
-                            ₹
-                            {(
-                              count * getCurrentPrice(section, itemName)
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+    return (
+      <Card className="mb-4">
+        <Card.Header className="d-flex align-items-center">
+          <DollarSign className="me-2" />
+          <strong>Price Breakdown</strong>
+          <Badge bg="info" className="ms-2" pill>
+            {orderData.serviceType}
+          </Badge>
+        </Card.Header>
+        <Card.Body>
+          <ListGroup variant="flush">
+            {orderData.priceBreakdown.map((item, index) => (
+              <ListGroup.Item
+                key={index}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  {item.item}
+                  {item.count > 1 && (
+                    <span className="text-muted"> × {item.count}</span>
+                  )}
                 </div>
-              )
+                <div>
+                  {item.count > 1 && (
+                    <small className="text-muted me-2">
+                      ₹{item.unitPrice} each
+                    </small>
+                  )}
+                  <strong>₹{item.total.toFixed(2)}</strong>
+                </div>
+              </ListGroup.Item>
+            ))}
+            <ListGroup.Item className="d-flex justify-content-between align-items-center bg-light">
+              <strong>Total</strong>
+              <strong className="text-primary">
+                ₹{orderData.totalPrice.toFixed(2)}
+              </strong>
+            </ListGroup.Item>
+          </ListGroup>
+        </Card.Body>
+      </Card>
+    );
+  };
+
+  // Render clothing items breakdown
+  const renderClothingItems = () => {
+    if (!orderData || !orderData.clothingItems) return null;
+
+    return (
+      <Card className="mb-4">
+        <Card.Header className="d-flex align-items-center">
+          <Package className="me-2" />
+          <strong>Clothing Items</strong>
+        </Card.Header>
+        <Card.Body>
+          {Object.entries(orderData.clothingItems).map(([section, items]) => {
+            const sectionItems = Object.entries(items).filter(
+              ([_, count]) => count > 0
+            );
+
+            if (sectionItems.length === 0) return null;
+
+            return (
+              <div key={section} className="mb-3">
+                <h6 className="text-muted">
+                  {section.charAt(0).toUpperCase() + section.slice(1)} Items:
+                </h6>
+                <ListGroup variant="flush">
+                  {sectionItems.map(([itemName, count]) => (
+                    <ListGroup.Item
+                      key={itemName}
+                      className="d-flex justify-content-between align-items-center py-2"
+                    >
+                      <span>{itemName}</span>
+                      <div>
+                        <Badge bg="secondary" className="me-2">
+                          {count}
+                        </Badge>
+                        <small className="text-muted">
+                          (₹
+                          {findItemPrice(
+                            section,
+                            itemName,
+                            orderData.serviceType
+                          )}{" "}
+                          each)
+                        </small>
+                      </div>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </div>
+            );
+          })}
+        </Card.Body>
+      </Card>
+    );
+  };
+
+  // Render status history timeline
+  const renderStatusTimeline = () => {
+    if (!orderData) return null;
+
+    // Make sure statusHistory is an array
+    const statusHistory = Array.isArray(orderData.statusHistory)
+      ? orderData.statusHistory
+      : [];
+
+    if (statusHistory.length === 0) {
+      return (
+        <Card className="mb-4">
+          <Card.Header className="d-flex align-items-center">
+            <Clock className="me-2" />
+            <strong>Status History</strong>
+          </Card.Header>
+          <Card.Body>
+            <Alert variant="info">No status updates available yet.</Alert>
+          </Card.Body>
+        </Card>
+      );
+    }
+
+    return (
+      <Card className="mb-4">
+        <Card.Header className="d-flex align-items-center">
+          <Clock className="me-2" />
+          <strong>Status History</strong>
+        </Card.Header>
+        <Card.Body>
+          <div className="timeline">
+            {statusHistory.map((event, index) => (
+              <div
+                key={index}
+                className="timeline-item mb-3 pb-3 border-bottom"
+              >
+                <div className="d-flex align-items-center mb-2">
+                  <Badge
+                    bg={
+                      orderStatuses.find((s) => s.id === event.status)?.color ||
+                      "primary"
+                    }
+                    className="me-2"
+                  >
+                    {orderStatuses.find((s) => s.id === event.status)?.label ||
+                      event.status}
+                  </Badge>
+                  <small className="text-muted">
+                    {formatTimestamp(event.timestamp)}
+                  </small>
+                </div>
+                <p className="mb-0">{event.message}</p>
+              </div>
+            ))}
+          </div>
+        </Card.Body>
+      </Card>
+    );
+  };
+
+  // Render order details card
+  const renderOrderDetails = () => {
+    if (!orderData) return null;
+
+    return (
+      <Card className="mb-4">
+        <Card.Header className="d-flex align-items-center">
+          <Package className="me-2" />
+          <strong>Order Details</strong>
+        </Card.Header>
+        <Card.Body>
+          <Row>
+            <Col md={6}>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  <strong>Order ID:</strong> {orderData.orderId}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <strong>Store:</strong> {orderData.store}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <strong>Service:</strong> {orderData.serviceType}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <strong>Order Date:</strong>{" "}
+                  {formatTimestamp(orderData.pickupDate)}
+                </ListGroup.Item>
+              </ListGroup>
+            </Col>
+            <Col md={6}>
+              <ListGroup variant="flush">
+                <ListGroup.Item className="d-flex align-items-start">
+                  <MapPin className="me-2 mt-1" size={16} />
+                  <div>
+                    <strong>Pickup:</strong>
+                    <br />
+                    {orderData.pickupAddress}
+                    <br />
+                    {formatDate(orderData.pickupDate)}, {orderData.pickupTime}
+                  </div>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex align-items-start position-relative">
+                  <MapPin className="me-2 mt-1" size={16} />
+                  <div>
+                    <strong>Delivery:</strong>
+                    <br />
+                    {orderData.deliveryAddress}
+                    <br />
+                    {formatDate(orderData.deliveryDate)},{" "}
+                    {orderData.deliveryTime}
+                  </div>
+
+                  {isOrderEditable(orderData.status) && (
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="position-absolute top-0 end-0 mt-2 me-2"
+                      onClick={() => setShowEditModal(true)}
+                    >
+                      <Edit size={14} className="me-1" /> Edit
+                    </Button>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+    );
+  };
+
+  // Render edit delivery modal
+  const renderEditDeliveryModal = () => {
+    return (
+      <Modal
+        show={showEditModal}
+        onHide={() => {
+          setShowEditModal(false);
+          setUpdateMessage(null);
+        }}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modify Delivery Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {updateMessage && (
+            <Alert variant={updateMessage.type} className="mb-3">
+              {updateMessage.type === "success" ? (
+                <CheckCircle className="me-2" size={16} />
+              ) : (
+                <AlertCircle className="me-2" size={16} />
+              )}
+              {updateMessage.text}
+            </Alert>
+          )}
+
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Delivery Address</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                value={deliveryInfo.address}
+                onChange={(e) =>
+                  setDeliveryInfo({ ...deliveryInfo, address: e.target.value })
+                }
+                placeholder="Enter delivery address"
+              />
+            </Form.Group>
+
+            <Row className="mb-3">
+              <Col>
+                <Form.Group>
+                  <Form.Label>Delivery Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={deliveryInfo.date}
+                    onChange={(e) =>
+                      setDeliveryInfo({ ...deliveryInfo, date: e.target.value })
+                    }
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group>
+                  <Form.Label>Delivery Time</Form.Label>
+                  <Form.Select
+                    value={deliveryInfo.time}
+                    onChange={(e) =>
+                      setDeliveryInfo({ ...deliveryInfo, time: e.target.value })
+                    }
+                  >
+                    <option value="">Select time slot</option>
+                    <option value="9 AM - 12 PM">Morning (9 AM - 12 PM)</option>
+                    <option value="12 PM - 3 PM">
+                      Afternoon (12 PM - 3 PM)
+                    </option>
+                    <option value="3 PM - 6 PM">Evening (3 PM - 6 PM)</option>
+                    <option value="6 PM - 9 PM">Night (6 PM - 9 PM)</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Alert variant="info" className="mb-3">
+              <small>
+                <strong>Note:</strong> You can only extend the delivery date and
+                modify delivery details before your order is delivered.
+              </small>
+            </Alert>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowEditModal(false);
+              setUpdateMessage(null);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleUpdateDelivery}
+            disabled={updating}
+          >
+            {updating ? (
+              <>
+                <Spinner size="sm" animation="border" className="me-2" />{" "}
+                Updating...
+              </>
+            ) : (
+              <>
+                <Save size={16} className="me-2" /> Save Changes
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const renderCancelModal = () => {
+    return (
+      <Modal
+        show={showCancelModal}
+        onHide={() => setShowCancelModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="text-danger">Cancel Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="warning">
+            <AlertCircle className="me-2" size={16} />
+            Are you sure you want to cancel this order? This action cannot be
+            undone.
+          </Alert>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Reason for cancellation (optional)</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Please tell us why you're cancelling this order"
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
+            Back
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleCancelOrder}
+            disabled={updating}
+          >
+            {updating ? (
+              <>
+                <Spinner size="sm" animation="border" className="me-2" />{" "}
+                Processing...
+              </>
+            ) : (
+              <>
+                <X size={16} className="me-2" /> Cancel Order
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  return (
+    <div>
+      <Navbar />
+
+      <Container className="mt-4 mb-4">
+        <Card className="shadow mb-4">
+          <Card.Header className="bg-info-subtle text-dark text-center">
+            <h3 className="mb-0 d-flex justify-content-center align-items-center">
+              <Truck className="me-3" /> Track Your Laundry Order
+            </h3>
+          </Card.Header>
+          <Card.Body>
+            {/* Order ID search */}
+            <Form onSubmit={handleSearchOrder}>
+              <Row className="justify-content-center mb-4">
+                <Col md={8}>
+                  <InputGroup>
+                    <Form.Control
+                      placeholder="Enter your Order ID"
+                      value={orderIdInput}
+                      onChange={(e) => setOrderIdInput(e.target.value)}
+                      required
+                    />
+                    <Button variant="primary" type="submit" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Spinner
+                            as="span"
+                            size="sm"
+                            animation="border"
+                            className="me-2"
+                          />{" "}
+                          Searching...
+                        </>
+                      ) : (
+                        "Track Order"
+                      )}
+                    </Button>
+                  </InputGroup>
+                </Col>
+              </Row>
+            </Form>
+
+            {/* Error message */}
+            {error && (
+              <Alert variant="danger" className="mb-4">
+                <AlertCircle className="me-2" />
+                {error}
+              </Alert>
             )}
 
-            <div className="d-flex justify-content-between border-top pt-2 mt-2">
-              <h6 className="fw-bold">Total</h6>
-              <h6 className="fw-bold">₹{calculateTotalPrice().toFixed(2)}</h6>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowPriceModal(false)}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Col>
+            {/* Order Status Display */}
+            {orderData && (
+              <>
+                {/* Current Status */}
+                <div className="text-center mb-4">
+                  <Badge
+                    bg={
+                      orderStatuses.find((s) => s.id === orderData.status)
+                        ?.color || "primary"
+                    }
+                    className="p-2 px-3 fs-6"
+                  >
+                    {orderStatuses.find((s) => s.id === orderData.status)
+                      ?.label || orderData.status}
+                  </Badge>
+
+                  <p className="text-muted mt-2">
+                    Order ID: {orderData.orderId}
+                  </p>
+                </div>
+
+                {/* Status Tracker */}
+                {renderStatusSteps()}
+
+                {/* Tabs for different sections */}
+                <Tabs
+                  activeKey={activeTab}
+                  onSelect={(k) => setActiveTab(k)}
+                  className="mb-4"
+                >
+                  <Tab eventKey="details" title="Order Details">
+                    {renderOrderDetails()}
+                  </Tab>
+                  <Tab eventKey="items" title="Clothing Items">
+                    {renderClothingItems()}
+                  </Tab>
+                  <Tab eventKey="price" title="Price Breakdown">
+                    {renderPriceBreakdown()}
+                  </Tab>
+                  <Tab eventKey="history" title="Status History">
+                    {renderStatusTimeline()}
+                  </Tab>
+                </Tabs>
+
+                {/* Action Buttons */}
+                <div className="d-flex justify-content-center gap-3">
+                  {isOrderEditable(orderData.status) && (
+                    <>
+                      <Button
+                        variant="outline-primary"
+                        onClick={() => setShowEditModal(true)}
+                      >
+                        <Edit className="me-2" size={16} />
+                        Update Delivery
+                      </Button>
+
+                      {/* Only show cancel button for orders that haven't been delivered or processed yet */}
+                      {["placed", "confirmed"].includes(orderData.status) && (
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => setShowCancelModal(true)}
+                        >
+                          <X className="me-2" size={16} />
+                          Cancel Order
+                        </Button>
+                      )}
+                    </>
+                  )}
+
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      setOrderData(null);
+                      setOrderIdInput("");
+                    }}
+                  >
+                    <RefreshCw className="me-2" size={16} />
+                    Track Another Order
+                  </Button>
+                </div>
+              </>
+            )}
+            {/* Empty state - when no order is searched yet */}
+            {!orderData && !loading && !error && (
+              <div className="text-center p-5">
+                <Package size={48} className="mb-3 text-muted" />
+                <h4>Track your laundry order</h4>
+                <p className="text-muted">
+                  Enter your order ID above to see the current status and
+                  details of your laundry order.
+                </p>
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </Container>
+
+      {/* Edit Delivery Modal */}
+      {renderEditDeliveryModal()}
+
+      {/* Cancel Order Modal */}
+      {renderCancelModal()}
+
+      <Alert variant="info" className="mb-0">
+        <small>
+          <strong>Refund Policy:</strong> Orders cancelled before pickup will
+          receive a full refund. Orders cancelled after pickup but before
+          processing will incur a 20% service fee. Orders in processing or later
+          stages cannot be cancelled.
+        </small>
+      </Alert>
+
+      <Footer />
+
+      {/* CSS for status steps */}
+      <style jsx>{`
+        .status-tracker {
+          position: relative;
+        }
+        .status-steps {
+          position: relative;
+        }
+        .status-point {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          font-size: 0.8rem;
+          transition: all 0.3s ease;
+        }
+        .status-point.active {
+          color: #0d6efd;
+        }
+        .status-point.current {
+          transform: scale(1.1);
+        }
+        .timeline-item:last-child {
+          border-bottom: none !important;
+        }
+
+        @media print {
+          nav,
+          footer,
+          button,
+          .form-control,
+          .input-group {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -19,7 +19,7 @@ import WashIron from "./pages/Wash-Iron";
 import SchedulePickup from "./pages/SchedulePickup";
 import ProfilePage from "./pages/Profile";
 import OrderStatus from "./pages/OrderStatus";
-import HistoryPage from "./pages/HistoryPage";
+import OrderHistory from "./pages/OrderHistory";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -64,10 +64,10 @@ const App = () => {
           }
         />
         <Route
-          path="/HistoryPage"
+          path="/OrderHistory"
           element={
             <ProtectedRoute>
-              <HistoryPage />
+              <OrderHistory />
             </ProtectedRoute>
           }
         />
