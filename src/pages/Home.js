@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import Footer from "../components/Footer";
@@ -58,6 +59,22 @@ import "./Home.css";
 
 const HomePage = () => {
   const sliderRef = useRef(null);
+
+  useEffect(() => {
+    // Only apply this if user is already logged in and shouldn't go back
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (isLoggedIn) {
+      window.history.replaceState(null, "", window.location.href);
+      window.onpopstate = () => {
+        window.history.replaceState(null, "", window.location.href);
+      };
+
+      return () => {
+        window.onpopstate = null; // Clean up when component unmounts
+      };
+    }
+  }, []);
 
   const trustedBrands = [
     { id: 1, name: "Tide", image: tideLogo },

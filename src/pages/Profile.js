@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Nav, Image } from "react-bootstrap";
 import {
   FaHome,
@@ -10,6 +11,8 @@ import {
   FaUser,
   FaEnvelope,
   FaUpload,
+  FaPhoneAlt,
+  FaCamera,
 } from "react-icons/fa";
 import LaundryBanner from "../assets/ProfileImg/laundry-banner.png";
 import logo from "../assets/logo.png";
@@ -19,16 +22,31 @@ const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState({
     name: "Ratan Tata",
     email: "ratantata@gmail.com",
-    phone: "+91 8867535499",
+    phone: "8867535499",
     avatar: profileImg,
   });
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    sessionStorage.clear();
+
+    // Clear history and force redirect
+    window.history.go(-(window.history.length - 1));
+    window.location.href = "/Login";
+  };
+
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
-    // Check if file exists
+    // Check if file exists and validate file type
     if (!file) return;
 
     // Check file type
@@ -56,7 +74,7 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
 
     // Here you would typically handle the file upload to your server
-    // uploadFile(file);
+    uploadFile(file);
   };
 
   const uploadFile = (file) => {
@@ -77,58 +95,70 @@ const ProfilePage = () => {
     // });
   };
 
+  const handleSaveChanges = () => {
+    setIsEditing(false);
+    // Here you would save changes to the backend
+    alert("Changes saved successfully!");
+  };
+
   return (
     <Container fluid className="p-0 m-0">
       <Row className="m-0">
         {/* Sidebar */}
         <Col
-          xs={3}
-          md={3}
+          xs={2}
+          md={2}
           lg={2}
-          className="p-0 min-vh-100"
-          style={{ backgroundColor: "#daf5ff" }}
+          className="p-0 min-vh-100 shadow"
+          style={{
+            background: "#003242",
+            color: "white",
+            transition: "all 0.3s",
+          }}
         >
           <div className="d-flex flex-column h-100">
-            <div className="p-2 text-start">
+            <div className="p-3 text-center">
               <Image
                 src={logo}
                 alt="Bachelor's Dhobi Logo"
                 fluid
-                style={{ maxWidth: "150px" }}
+                style={{ maxWidth: "200px" }}
+                className="mb-0"
               />
             </div>
 
-            <Nav className="flex-column mt-4">
+            <Nav className="flex-column mt-5">
               <Nav.Link
                 href="/HomePage"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaHome className="me-3" size={20} /> Home
+                <FaHome className="me-3" size={18} /> Home
               </Nav.Link>
               <Nav.Link
                 href="/Stores"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaStore className="me-3" size={20} /> Stores
+                <FaStore className="me-3" size={18} /> Stores
               </Nav.Link>
               <Nav.Link
                 href="/OrderStatus"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaClipboardList className="me-3" size={20} /> Orders
+                <FaClipboardList className="me-3" size={18} /> Orders
               </Nav.Link>
               <Nav.Link
-                href="/HistoryPage"
-                className="p-3 d-flex align-items-center text-dark"
+                href="/OrderHistory"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaHistory className="me-3" size={20} /> History
+                <FaHistory className="me-3" size={18} /> History
               </Nav.Link>
             </Nav>
 
-            <div className="mt-auto p-3">
+            <div className="mt-auto p-4">
               <Button
-                variant="dark"
-                className="w-100 d-flex align-items-center justify-content-center rounded-4"
+                onClick={handleLogout}
+                variant="light"
+                className="w-100 d-flex align-items-center justify-content-center rounded-pill py-2"
               >
                 <FaSignOutAlt className="me-2" /> Logout
               </Button>
@@ -137,167 +167,276 @@ const ProfilePage = () => {
         </Col>
 
         {/* Main Content */}
-        <Col xs={9} md={9} lg={10} className="p-0">
+        <Col xs={10} md={10} lg={10} className="p-0 bg-light">
           {/* Header with Laundry Banner */}
-          <div className="position-relative border-bottom">
+          <div className="position-relative">
             <img
               src={LaundryBanner}
               alt="Laundry Banner"
               className="w-100"
-              style={{ height: "auto", objectFit: "cover" }}
+              style={{
+                height: "auto",
+                objectFit: "cover",
+              }}
             />
 
             {/* Profile Picture */}
             <div
               className="position-absolute"
-              style={{ bottom: "-80px", left: "50px" }}
+              style={{ bottom: "-70px", left: "60px" }}
             >
-              <Image
-                src={userInfo.avatar}
-                roundedCircle
-                style={{
-                  width: "180px",
-                  height: "180px",
-                  border: "3px solid white",
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-              />
+              <div className="position-relative">
+                <Image
+                  src={userInfo.avatar}
+                  roundedCircle
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    border: "5px solid white",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <div
+                  className="position-absolute bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
+                  style={{
+                    bottom: "10px",
+                    right: "5px",
+                    width: "40px",
+                    height: "40px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => document.getElementById("avatarInput").click()}
+                >
+                  <FaCamera size={18} />
+                  <input
+                    id="avatarInput"
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Profile Information */}
-          <Container className="mt-5 p-5">
-            <Row>
+          <Container className="mt-5 py-4 px-5">
+            <Row className="mt-5">
               <Col
                 xs={12}
-                className="d-flex justify-content-between align-items-center"
+                className="d-flex justify-content-between align-items-center mb-4"
               >
                 <div>
-                  <h2>{userInfo.name}</h2>
-                  <p className="text-muted">{userInfo.email}</p>
+                  <h2 className="fw-bold">{userInfo.name}</h2>
+                  <p className="text-muted mb-0">{userInfo.email}</p>
                 </div>
-                <Button
-                  variant="outline-primary"
-                  className="d-flex align-items-center"
-                >
-                  Edit <FaEdit className="ms-2" />
-                </Button>
+                {isEditing ? (
+                  <Button
+                    variant="primary"
+                    className="d-flex align-items-center rounded-pill px-4"
+                    onClick={handleSaveChanges}
+                  >
+                    Save Changes
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline-primary"
+                    className="d-flex align-items-center rounded-pill px-4"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <FaEdit className="me-2" /> Edit Profile
+                  </Button>
+                )}
               </Col>
             </Row>
 
+            <Row>
+              <Col xs={12}>
+                <div className="bg-white p-4 rounded-4 shadow-sm">
+                  <h4 className="mb-1 fw-bold">Personal Information</h4>
+                  <p className="text-muted small mb-4">
+                    Manage your personal information and account settings
+                  </p>
+
+                  <Form>
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Full Name
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaUser className="text-primary" />
+                            </span>
+                            <Form.Control
+                              type="text"
+                              placeholder="Enter your full name"
+                              value={userInfo.name}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  name: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Email Address
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaEnvelope className="text-primary" />
+                            </span>
+                            <Form.Control
+                              type="email"
+                              placeholder="Enter your email"
+                              value={userInfo.email}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  email: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Phone Number
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaPhoneAlt className="text-primary" />
+                            </span>
+                            <span className="input-group-text bg-light border-start-0 border-end-0">
+                              +91
+                            </span>
+                            <Form.Control
+                              type="tel"
+                              placeholder="Enter your phone number"
+                              value={userInfo.phone}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  phone: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    {isEditing && (
+                      <Row>
+                        <Col xs={12}>
+                          <Form.Group>
+                            <Form.Label className="fw-semibold">
+                              Change Avatar
+                            </Form.Label>
+                            <div
+                              className="position-relative p-4 text-center rounded-4 mb-3"
+                              style={{
+                                border: "2px dashed #dee2e6",
+                                background: "#f8f9fa",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                document.getElementById("fileInput").click()
+                              }
+                            >
+                              <div className="py-3">
+                                <FaUpload
+                                  size={24}
+                                  className="mb-3 text-primary"
+                                />
+                                <h5 className="fw-semibold">
+                                  Click to upload your image
+                                </h5>
+                                <p className="text-muted small mb-0">
+                                  Supported formats: JPG, PNG (Maximum 10MB)
+                                </p>
+                              </div>
+                              <Form.Control
+                                id="fileInput"
+                                type="file"
+                                accept=".jpg,.jpeg,.png"
+                                style={{ display: "none" }}
+                                onChange={handleFileChange}
+                              />
+                            </div>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    )}
+                  </Form>
+                </div>
+              </Col>
+            </Row>
+
+            {/* Additional info cards could go here */}
             <Row className="mt-4">
-              <Col xs={12}>
-                <h4>Personal Info</h4>
-                <p className="text-muted">
-                  You can change your personal information settings here.
-                </p>
-              </Col>
-            </Row>
-
-            <Row className="mt-3">
-              <Col xs={12}>
-                <Form
-                  className="bg-white p-4 rounded-4"
-                  style={{ boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)" }}
-                >
-                  <Row className="mb-3">
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Full Name</Form.Label>
-                        <div
-                          className="input-group rounded-4"
-                          style={{
-                            border: "1px solid black",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <span className="input-group-text">
-                            <FaUser />
-                          </span>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter your full name"
-                          />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Email Address</Form.Label>
-                        <div
-                          className="input-group rounded-4"
-                          style={{
-                            border: "1px solid black",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <span className="input-group-text">
-                            <FaEnvelope />
-                          </span>
-                          <Form.Control
-                            type="email"
-                            placeholder="Enter your email"
-                          />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row className="mb-3">
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Phone Number</Form.Label>
-                        <div
-                          className="input-group rounded-4"
-                          style={{
-                            border: "1px solid black",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <span className="input-group-text">+91</span>
-                          <Form.Control
-                            type="tel"
-                            placeholder="Enter your phone number"
-                          />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row className="mb-3">
-                    <Col xs={12}>
-                      <Form.Group>
-                        <Form.Label>Change Avatar</Form.Label>
-                        <div
-                          className="position-relative p-5 text-center rounded-4"
-                          style={{
-                            border: "2px dotted black",
-                            borderSpacing: "15px",
-                            overflow: "hidden",
-                            cursor: "pointer",
-                          }}
-                          onClick={() =>
-                            document.getElementById("fileInput").click()
-                          }
-                        >
-                          <FaUpload size={24} className="mb-3" />
-                          <h5>Click here to upload your image.</h5>
-                          <p className="text-muted small">
-                            Supported format JPG, PNG(10mb each)
-                          </p>
-                          <Form.Control
-                            id="fileInput"
-                            type="file"
-                            accept=".jpg,.jpeg,.png"
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                          />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Form>
+              <Col md={12}>
+                <div className="bg-white p-4 rounded-4 shadow-sm h-100">
+                  <h5 className="mb-3 fw-bold">Saved Addresses</h5>
+                  <p className="text-muted small">No saved addresses found.</p>
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    className="rounded-pill px-4 mt-2"
+                  >
+                    Add New Address
+                  </Button>
+                </div>
               </Col>
             </Row>
           </Container>

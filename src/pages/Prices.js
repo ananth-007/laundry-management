@@ -689,9 +689,23 @@ function PriceList() {
       <Navbar />
 
       <div className="d-flex flex-column min-vh-100">
-        <div className="bg-info-subtle bg-opacity-25 py-5">
-          <Container className="text-center">
-            <h1 className="fw-bold">Pricelist</h1>
+        {/* Hero Section */}
+        <div className="py-5 bg-info-subtle">
+          <Container>
+            <Row className="align-items-center">
+              <Col md={8} className="mx-auto text-center">
+                <h1
+                  className="display-4 fw-bold mb-3"
+                  style={{ color: "#003242" }}
+                >
+                  Professional Care at Transparent Prices
+                </h1>
+                <p className="lead mb-4">
+                  Quality laundry service doesn't have to break the bank. At
+                  Bachelor's Dhobi, we combine affordability with excellence.
+                </p>
+              </Col>
+            </Row>
           </Container>
         </div>
 

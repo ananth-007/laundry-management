@@ -1,21 +1,26 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import loginBg from '../assets/login-bgg.png';
-import "./Login.css";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
-import HomePage from "../pages/Home";
-import Signup from "../pages/Signup";
+import "bootstrap/dist/css/bootstrap.min.css";
+import loginBg from "../assets/login-bgg.png";
+import axios from "axios";
+import "./Login.css";
 
 function Login() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If already logged in, redirect to home
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/HomePage", { replace: true });
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,21 +30,31 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/api/users/login", {
-        username: formData.username,
-        password: formData.password,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/users/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+      console.log("User logged in:", response.data);
 
-      if (response.data.success) {
-        toast.success("Login successful!");
-        navigate("/HomePage"); // Redirect to the home page
-      } else {
-        toast.error("Invalid username or password");
-      }
+      // Make sure to set these BEFORE navigation
+      localStorage.setItem("token", response.data.token || "dummy-token");
+      localStorage.setItem("isLoggedIn", "true");
+      console.log("Login state set:", localStorage.getItem("isLoggedIn")); // Debug log
+
+      toast.success("Login successful!");
+      console.log("Navigating to HomePage..."); // Debug log
+      window.location.replace("/HomePage");
     } catch (error) {
       if (error.response) {
         console.error("Login failed:", error.response.data);
-        toast.error(`Login failed: ${error.response.data.message || error.response.statusText}`);
+        toast.error(
+          `Login failed: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
       } else if (error.request) {
         console.error("No response received:", error.request);
         toast.error("No response received from the server. Please try again.");
@@ -52,25 +67,37 @@ function Login() {
 
   return (
     <div className="container-fluid d-flex justify-content-center align-items-center vh-100 bg-container">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
       <div className="row w-75 shadow-lg custom-rounded">
-        {/* Left Side: Image & Branding */}
         <div className="col-md-6 p-0 bg-info-subtle">
           <img src={loginBg} alt="Laundry Illustration" className="img-fluid" />
         </div>
 
-        {/* Right Side: Login Form */}
         <div className="col-md-6 p-6 bg-info-subtle right-container">
           <h2 className="text-dark fw-bold text-center">WELCOME</h2>
-          <p className="text-center text-muted"><em>Login with username</em></p>
+          <p className="text-center text-muted">
+            <em>Sign in to your account</em>
+          </p>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <input
-                type="text"
+                type="email"
                 className="form-control bg-light"
-                placeholder="Username"
-                name="username"
-                value={formData.username}
+                placeholder="Email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
                 required
               />
@@ -86,33 +113,18 @@ function Login() {
                 required
               />
             </div>
-           <button
-             type="button"
-             className="btn btn-primary w-100 fw-bold"
-             onClick={() => window.location.href = "/HomePage"}>
-             Login
-           </button>
-
+            <button type="submit" className="btn btn-primary w-100 fw-bold">
+              Log In
+            </button>
           </form>
-
           <p className="mt-3 text-center">
-            "Don't have an account?" <a href="/SignUp" className="fw-bold text-dark">Create an account</a>
+            Don't have an account?{" "}
+            <a href="/Signup" className="fw-bold text-dark">
+              Sign up
+            </a>
           </p>
         </div>
       </div>
-
-      {/* Toastify Container */}
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </div>
   );
 }

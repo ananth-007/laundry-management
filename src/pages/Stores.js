@@ -21,6 +21,8 @@ const StoreLocator = () => {
       address:
         "Pragathi Mansion, Margosa Rd, Malleshwaram, Bengaluru, Karnataka 560003, India",
       image: malleshwaramStoreImg,
+      highlight: "Family Favorite",
+      openHours: "7 AM - 9 PM",
     },
     {
       id: 2,
@@ -28,6 +30,8 @@ const StoreLocator = () => {
       address:
         "24, Palm Ave, Green Glen Layout, Bellandur, Bengaluru, Karnataka 560103, India",
       image: bellandurStoreImg,
+      highlight: "Express Service",
+      openHours: "6 AM - 10 PM",
     },
     {
       id: 3,
@@ -35,6 +39,8 @@ const StoreLocator = () => {
       address:
         "BFML Layout, 5th Stage, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098, India",
       image: rrNagarStoreImg,
+      highlight: "Eco-Friendly",
+      openHours: "7 AM - 9 PM",
     },
     {
       id: 4,
@@ -42,6 +48,8 @@ const StoreLocator = () => {
       address:
         "KHB Colony, Bhattarahalli, Hosakotehoralnahalli, K R Puram, Bengaluru, Karnataka 560049, India",
       image: krPuramStoreImg,
+      highlight: "Premium Care",
+      openHours: "7 AM - 8 PM",
     },
     {
       id: 5,
@@ -49,6 +57,8 @@ const StoreLocator = () => {
       address:
         "Off Kempegowda International Airport Road, 5th Phase, Thanisandra, Bengaluru, Karnataka 560077, India",
       image: thanisandraStoreImg,
+      highlight: "New Location",
+      openHours: "8 AM - 9 PM",
     },
     {
       id: 6,
@@ -56,6 +66,8 @@ const StoreLocator = () => {
       address:
         "No. 11/1, A S Complex, 1st A Main Road, Near Police Station, Yelahanka New Town 560064",
       image: yelahankaStoreImg,
+      highlight: "24-Hour Dropbox",
+      openHours: "7 AM - 9 PM",
     },
     {
       id: 7,
@@ -63,6 +75,8 @@ const StoreLocator = () => {
       address:
         "Kodigehalli main road, sahakarnagar, Sahakarnagar, Bengaluru, Karnataka 560092, India",
       image: sahakaraNagarStoreImg,
+      highlight: "Premium Fabrics",
+      openHours: "7 AM - 8 PM",
     },
     {
       id: 8,
@@ -70,6 +84,8 @@ const StoreLocator = () => {
       address:
         "Sri Vinayaka Theatre, Thulasi Theatre Road, Marathahalli, Bengaluru, Karnataka 560037",
       image: marathahalliStoreImg,
+      highlight: "Tech-Friendly",
+      openHours: "6 AM - 10 PM",
     },
     {
       id: 9,
@@ -77,6 +93,8 @@ const StoreLocator = () => {
       address:
         "Gali Rd, Maruthi Nagar, Basavanna Nagar, Whitefield, Bengaluru, Karnataka 560048, India",
       image: hoodiStoreImg,
+      highlight: "Corporate Services",
+      openHours: "7 AM - 9 PM",
     },
   ];
 
@@ -85,19 +103,55 @@ const StoreLocator = () => {
       {/* Header */}
       <Navbar />
 
-      {/* Store Locator Title */}
-      <div className="py-5 ">
+      {/* Hero Section */}
+      <div className="py-5">
         <Container>
-          <h1 className="text-center fw-bold">Store Locator</h1>
-          <p className="mx-auto text-center" style={{ width: "50%" }}>
-            Easily locate our laundry stores across Bengaluru. Whether you're
-            looking for convenient dry cleaning or a quick wash, we’re just
-            around the corner!
-          </p>
+          <Row className="align-items-center">
+            <Col md={8} className="mx-auto text-center">
+              <h1
+                className="display-4 fw-bold mb-3"
+                style={{ color: "#003242" }}
+              >
+                Find Your Perfect Laundry Spot
+              </h1>
+              <p className="lead mb-4">
+                Crisp, Clean, and Convenient — Bachelor's Dhobi Laundry is Just
+                Around the Corner!
+              </p>
+              <p
+                className="mx-auto text-center mb-0"
+                style={{ maxWidth: "700px" }}
+              >
+                With 9 locations across Bengaluru, we're bringing professional
+                laundry services closer to your doorstep. Experience the
+                Bachelor's Dhobi difference today!
+              </p>
+            </Col>
+          </Row>
         </Container>
       </div>
 
-      {/* Store Listings */}
+      {/* Why Choose Us Banner */}
+      <div className="py-4" style={{ backgroundColor: "#003242" }}>
+        <Container>
+          <Row className="text-center text-white">
+            <Col md={4}>
+              <h5>✨ Premium Quality</h5>
+              <p className="small mb-0">Expertly handled fabrics, every time</p>
+            </Col>
+            <Col md={4}>
+              <h5>⚡ Quick Turnaround</h5>
+              <p className="small mb-0">Express services available</p>
+            </Col>
+            <Col md={4}>
+              <h5>🌿 Eco-Friendly Options</h5>
+              <p className="small mb-0">Gentle on clothes, kind to earth</p>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      {/* Store Listings Title */}
       <Container className="py-5">
         <Row>
           {stores.map((store) => (
