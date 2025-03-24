@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Form, Button, Nav, Image } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Nav,
+  Image,
+  Alert,
+} from "react-bootstrap";
 import {
   FaHome,
   FaStore,
@@ -13,20 +22,72 @@ import {
   FaUpload,
   FaPhoneAlt,
   FaCamera,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import LaundryBanner from "../assets/ProfileImg/laundry-banner.png";
 import logo from "../assets/logo.png";
 import profileImg from "../assets/ProfileImg/profile-img.jpg";
+import axios from "axios";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState({
-    name: "Ratan Tata",
-    email: "ratantata@gmail.com",
-    phone: "8867535499",
-    avatar: profileImg,
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    avatarUrl: profileImg,
+    username: "",
   });
 
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const navigate = useNavigate();
+
+  const API_BASE_URL = "http://localhost:8080";
+
+  // Fetch user profile when component mounts
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        console.log("Token being sent:", token); // Log the token
+
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Ensure correct Bearer format
+          },
+        });
+
+        console.log("Response status:", response.status); // Log response status
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error response:", errorText);
+          throw new Error(errorText || "Failed to fetch profile");
+        }
+
+        const data = await response.json();
+        setUserInfo(data);
+      } catch (err) {
+        console.error("Detailed error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleLogout = () => {
     // Clear auth data
@@ -40,9 +101,6 @@ const ProfilePage = () => {
     window.location.href = "/Login";
   };
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -51,13 +109,13 @@ const ProfilePage = () => {
 
     // Check file type
     if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-      alert("Please upload a JPG or PNG file");
+      setError("Please upload a JPG or PNG file");
       return;
     }
 
     // Check file size (10MB = 10 * 1024 * 1024 bytes)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size exceeds 10MB limit");
+      setError("File size exceeds 10MB limit");
       return;
     }
 
@@ -65,40 +123,89 @@ const ProfilePage = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setPreviewUrl(reader.result);
-      // Also update the user info avatar
-      setUserInfo({
-        ...userInfo,
-        avatar: reader.result,
-      });
+      // Don't update the state with the full base64 data
+      // Just store the file itself for later upload
+      setSelectedFile(file);
     };
     reader.readAsDataURL(file);
-
-    // Here you would typically handle the file upload to your server
-    uploadFile(file);
   };
 
-  const uploadFile = (file) => {
-    const formData = new FormData();
-    formData.append("avatar", file);
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
 
-    // Example using fetch:
-    // fetch('/api/upload-avatar', {
-    //   method: 'POST',
-    //   body: formData
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    // });
-  };
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Authentication token missing. Please log in again.");
+        return;
+      }
 
-  const handleSaveChanges = () => {
-    setIsEditing(false);
-    // Here you would save changes to the backend
-    alert("Changes saved successfully!");
+      let avatarUrl = userInfo.avatarUrl;
+
+      // Only upload if there's a new file
+      if (selectedFile) {
+        try {
+          const formData = new FormData();
+          formData.append("avatar", selectedFile);
+
+          const uploadResponse = await axios.post(
+            `${API_BASE_URL}/api/users/upload-avatar`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // Get the URL from the server's response
+          avatarUrl = uploadResponse.data.avatarUrl;
+        } catch (uploadErr) {
+          console.error("Error uploading avatar:", uploadErr);
+          throw new Error("Failed to upload avatar. Please try again.");
+        }
+      }
+
+      // Update user profile
+      const response = await axios.patch(
+        `${API_BASE_URL}/api/users/profile`,
+        {
+          fullName: userInfo.fullName,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          address: userInfo.address,
+          avatarUrl: avatarUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update userInfo with the response data
+      setUserInfo({
+        ...userInfo,
+        ...response.data,
+        avatarUrl: response.data.avatarUrl || userInfo.avatarUrl,
+      });
+
+      setIsEditing(false);
+      setSuccess("Profile updated successfully!");
+      setPreviewUrl(null);
+      setSelectedFile(null); // Clear the selected file
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to update profile. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -187,7 +294,7 @@ const ProfilePage = () => {
             >
               <div className="position-relative">
                 <Image
-                  src={userInfo.avatar}
+                  src={previewUrl || userInfo.avatarUrl}
                   roundedCircle
                   style={{
                     width: "150px",
@@ -224,13 +331,35 @@ const ProfilePage = () => {
 
           {/* Profile Information */}
           <Container className="mt-5 py-4 px-5">
+            {loading && <Alert variant="info">Loading profile data...</Alert>}
+
+            {error && (
+              <Alert
+                variant="danger"
+                onClose={() => setError(null)}
+                dismissible
+              >
+                {error}
+              </Alert>
+            )}
+
+            {success && (
+              <Alert
+                variant="success"
+                onClose={() => setSuccess(null)}
+                dismissible
+              >
+                {success}
+              </Alert>
+            )}
+
             <Row className="mt-5">
               <Col
                 xs={12}
                 className="d-flex justify-content-between align-items-center mb-4"
               >
                 <div>
-                  <h2 className="fw-bold">{userInfo.name}</h2>
+                  <h2 className="fw-bold">{userInfo.fullName}</h2>
                   <p className="text-muted mb-0">{userInfo.email}</p>
                 </div>
                 {isEditing ? (
@@ -238,8 +367,9 @@ const ProfilePage = () => {
                     variant="primary"
                     className="d-flex align-items-center rounded-pill px-4"
                     onClick={handleSaveChanges}
+                    disabled={loading}
                   >
-                    Save Changes
+                    {loading ? "Saving..." : "Save Changes"}
                   </Button>
                 ) : (
                   <Button
@@ -280,11 +410,11 @@ const ProfilePage = () => {
                             <Form.Control
                               type="text"
                               placeholder="Enter your full name"
-                              value={userInfo.name}
+                              value={userInfo.fullName}
                               onChange={(e) =>
                                 setUserInfo({
                                   ...userInfo,
-                                  name: e.target.value,
+                                  fullName: e.target.value,
                                 })
                               }
                               readOnly={!isEditing}
@@ -374,6 +504,82 @@ const ProfilePage = () => {
                           </div>
                         </Form.Group>
                       </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Address
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaMapMarkerAlt className="text-primary" />
+                            </span>
+                            <Form.Control
+                              as="textarea"
+                              rows={1}
+                              placeholder="Enter your address"
+                              value={userInfo.address}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  address: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                                resize: "none",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Username
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaUser className="text-primary" />
+                            </span>
+                            <Form.Control
+                              type="text"
+                              placeholder="Enter your username"
+                              value={userInfo.username}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  username: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                                resize: "none",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
                     </Row>
 
                     {isEditing && (
@@ -419,23 +625,6 @@ const ProfilePage = () => {
                       </Row>
                     )}
                   </Form>
-                </div>
-              </Col>
-            </Row>
-
-            {/* Additional info cards could go here */}
-            <Row className="mt-4">
-              <Col md={12}>
-                <div className="bg-white p-4 rounded-4 shadow-sm h-100">
-                  <h5 className="mb-3 fw-bold">Saved Addresses</h5>
-                  <p className="text-muted small">No saved addresses found.</p>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="rounded-pill px-4 mt-2"
-                  >
-                    Add New Address
-                  </Button>
                 </div>
               </Col>
             </Row>

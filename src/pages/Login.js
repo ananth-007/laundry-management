@@ -40,7 +40,7 @@ function Login() {
       console.log("User logged in:", response.data);
 
       // Make sure to set these BEFORE navigation
-      localStorage.setItem("token", response.data.token || "dummy-token");
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("isLoggedIn", "true");
       console.log("Login state set:", localStorage.getItem("isLoggedIn")); // Debug log
 
