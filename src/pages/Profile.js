@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Form, Button, Nav, Image } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Nav,
+  Image,
+  Alert,
+} from "react-bootstrap";
 import {
   FaHome,
   FaStore,
@@ -13,20 +22,94 @@ import {
   FaUpload,
   FaPhoneAlt,
   FaCamera,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import LaundryBanner from "../assets/ProfileImg/laundry-banner.png";
 import logo from "../assets/logo.png";
-import profileImg from "../assets/ProfileImg/profile-img.jpg";
+import defaultProfileImg from "../assets/ProfileImg/profile-img.jpg";
+import axios from "axios";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState({
-    name: "Ratan Tata",
-    email: "ratantata@gmail.com",
-    phone: "8867535499",
-    avatar: profileImg,
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    username: "",
   });
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
   const navigate = useNavigate();
+
+  const API_BASE_URL = "http://localhost:8080";
+
+  // Fetch user profile when component mounts
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        console.log("Token being sent:", token);
+
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/api/profile/details`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          setUserInfo(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
+        } catch (error) {
+          console.error("Profile fetch error:", error);
+
+          // Detailed error handling
+          if (error.response) {
+            switch (error.response.status) {
+              case 401:
+                console.error("Unauthorized: Invalid token");
+                localStorage.removeItem("token");
+                navigate("/login");
+                break;
+
+              case 404:
+                setError("Profile not found. Contact support.");
+                break;
+
+              case 500:
+                setError("Server error. Please try again later.");
+                break;
+
+              default:
+                setError(`Unexpected error: ${error.response.status}`);
+            }
+          } else if (error.request) {
+            setError("No response from server. Check your network.");
+          } else {
+            setError("Error setting up the request.");
+          }
+        }
+      } catch (generalError) {
+        console.error("Unexpected error:", generalError);
+        setError("An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [navigate]);
 
   const handleLogout = () => {
     // Clear auth data
@@ -40,10 +123,7 @@ const ProfilePage = () => {
     window.location.href = "/Login";
   };
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleFileChange = (event) => {
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
 
     // Check if file exists and validate file type
@@ -51,54 +131,70 @@ const ProfilePage = () => {
 
     // Check file type
     if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-      alert("Please upload a JPG or PNG file");
+      setError("Please upload a JPG or PNG file");
       return;
     }
 
     // Check file size (10MB = 10 * 1024 * 1024 bytes)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size exceeds 10MB limit");
+      setError("File size exceeds 10MB limit");
       return;
     }
 
-    // Create a preview URL for the image
+    // Create a preview of the selected image
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewUrl(reader.result);
-      // Also update the user info avatar
-      setUserInfo({
-        ...userInfo,
-        avatar: reader.result,
-      });
+      setSelectedImage(reader.result);
     };
     reader.readAsDataURL(file);
-
-    // Here you would typically handle the file upload to your server
-    uploadFile(file);
   };
 
-  const uploadFile = (file) => {
-    const formData = new FormData();
-    formData.append("avatar", file);
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
 
-    // Example using fetch:
-    // fetch('/api/upload-avatar', {
-    //   method: 'POST',
-    //   body: formData
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    // });
-  };
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Authentication token missing. Please log in again.");
+        return;
+      }
 
-  const handleSaveChanges = () => {
-    setIsEditing(false);
-    // Here you would save changes to the backend
-    alert("Changes saved successfully!");
+      // Update user profile
+      const response = await axios.patch(
+        `${API_BASE_URL}/api/profile/update`,
+        {
+          fullName: userInfo.fullName,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          address: userInfo.address,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update userInfo with the response data
+      setUserInfo({
+        ...userInfo,
+        ...response.data,
+      });
+
+      setIsEditing(false);
+      setSuccess("Profile updated successfully!");
+      setSelectedImage(null);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to update profile. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -187,7 +283,7 @@ const ProfilePage = () => {
             >
               <div className="position-relative">
                 <Image
-                  src={userInfo.avatar}
+                  src={selectedImage || defaultProfileImg}
                   roundedCircle
                   style={{
                     width: "150px",
@@ -198,39 +294,65 @@ const ProfilePage = () => {
                     boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
                   }}
                 />
-                <div
-                  className="position-absolute bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
-                  style={{
-                    bottom: "10px",
-                    right: "5px",
-                    width: "40px",
-                    height: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => document.getElementById("avatarInput").click()}
-                >
-                  <FaCamera size={18} />
-                  <input
-                    id="avatarInput"
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                </div>
+                {isEditing && (
+                  <div
+                    className="position-absolute bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
+                    style={{
+                      bottom: "10px",
+                      right: "5px",
+                      width: "40px",
+                      height: "40px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() =>
+                      document.getElementById("avatarInput").click()
+                    }
+                  >
+                    <FaCamera size={18} />
+                    <input
+                      id="avatarInput"
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
           {/* Profile Information */}
           <Container className="mt-5 py-4 px-5">
+            {loading && <Alert variant="info">Loading profile data...</Alert>}
+
+            {error && (
+              <Alert
+                variant="danger"
+                onClose={() => setError(null)}
+                dismissible
+              >
+                {error}
+              </Alert>
+            )}
+
+            {success && (
+              <Alert
+                variant="success"
+                onClose={() => setSuccess(null)}
+                dismissible
+              >
+                {success}
+              </Alert>
+            )}
+
             <Row className="mt-5">
               <Col
                 xs={12}
                 className="d-flex justify-content-between align-items-center mb-4"
               >
                 <div>
-                  <h2 className="fw-bold">{userInfo.name}</h2>
+                  <h2 className="fw-bold">{userInfo.fullName}</h2>
                   <p className="text-muted mb-0">{userInfo.email}</p>
                 </div>
                 {isEditing ? (
@@ -238,8 +360,9 @@ const ProfilePage = () => {
                     variant="primary"
                     className="d-flex align-items-center rounded-pill px-4"
                     onClick={handleSaveChanges}
+                    disabled={loading}
                   >
-                    Save Changes
+                    {loading ? "Saving..." : "Save Changes"}
                   </Button>
                 ) : (
                   <Button
@@ -280,11 +403,11 @@ const ProfilePage = () => {
                             <Form.Control
                               type="text"
                               placeholder="Enter your full name"
-                              value={userInfo.name}
+                              value={userInfo.fullName}
                               onChange={(e) =>
                                 setUserInfo({
                                   ...userInfo,
-                                  name: e.target.value,
+                                  fullName: e.target.value,
                                 })
                               }
                               readOnly={!isEditing}
@@ -374,6 +497,82 @@ const ProfilePage = () => {
                           </div>
                         </Form.Group>
                       </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Address
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaMapMarkerAlt className="text-primary" />
+                            </span>
+                            <Form.Control
+                              as="textarea"
+                              rows={1}
+                              placeholder="Enter your address"
+                              value={userInfo.address}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  address: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                                resize: "none",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">
+                            Username
+                          </Form.Label>
+                          <div
+                            className="input-group"
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            <span className="input-group-text bg-light border-end-0">
+                              <FaUser className="text-primary" />
+                            </span>
+                            <Form.Control
+                              type="text"
+                              placeholder="Enter your username"
+                              value={userInfo.username}
+                              onChange={(e) =>
+                                setUserInfo({
+                                  ...userInfo,
+                                  username: e.target.value,
+                                })
+                              }
+                              readOnly={!isEditing}
+                              className="border-start-0 py-2"
+                              style={{
+                                backgroundColor: isEditing
+                                  ? "white"
+                                  : "#f8f9fa",
+                                resize: "none",
+                              }}
+                            />
+                          </div>
+                        </Form.Group>
+                      </Col>
                     </Row>
 
                     {isEditing && (
@@ -411,7 +610,6 @@ const ProfilePage = () => {
                                 type="file"
                                 accept=".jpg,.jpeg,.png"
                                 style={{ display: "none" }}
-                                onChange={handleFileChange}
                               />
                             </div>
                           </Form.Group>
@@ -419,23 +617,6 @@ const ProfilePage = () => {
                       </Row>
                     )}
                   </Form>
-                </div>
-              </Col>
-            </Row>
-
-            {/* Additional info cards could go here */}
-            <Row className="mt-4">
-              <Col md={12}>
-                <div className="bg-white p-4 rounded-4 shadow-sm h-100">
-                  <h5 className="mb-3 fw-bold">Saved Addresses</h5>
-                  <p className="text-muted small">No saved addresses found.</p>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="rounded-pill px-4 mt-2"
-                  >
-                    Add New Address
-                  </Button>
                 </div>
               </Col>
             </Row>

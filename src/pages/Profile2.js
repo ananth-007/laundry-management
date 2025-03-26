@@ -16,11 +16,11 @@ import LaundryBanner from "../assets/ProfileImg/laundry-banner.png";
 import logo from "../assets/logo.png";
 import profileImg from "../assets/ProfileImg/profile-img.jpg";
 
-const ProfilePage = () => {
+const ProfilePage2 = () => {
   const [userInfo, setUserInfo] = useState({
     name: "Ratan Tata",
     email: "ratantata@gmail.com",
-    phone: "+91 8867535499",
+    phone: "9876543121",
     avatar: profileImg,
   });
 
@@ -77,19 +77,6 @@ const ProfilePage = () => {
   const uploadFile = (file) => {
     const formData = new FormData();
     formData.append("avatar", file);
-
-    // Example using fetch:
-    // fetch('/api/upload-avatar', {
-    //   method: 'POST',
-    //   body: formData
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    // });
   };
 
   return (
@@ -97,54 +84,61 @@ const ProfilePage = () => {
       <Row className="m-0">
         {/* Sidebar */}
         <Col
-          xs={3}
-          md={3}
+          xs={2}
+          md={2}
           lg={2}
-          className="p-0 min-vh-100"
-          style={{ backgroundColor: "#daf5ff" }}
+          className="p-0 min-vh-100 shadow"
+          style={{
+            background: "#003242",
+            color: "white",
+            transition: "all 0.3s",
+          }}
         >
           <div className="d-flex flex-column h-100">
-            <div className="p-2 text-start">
-              <Image
-                src={logo}
-                alt="Bachelor's Dhobi Logo"
-                fluid
-                style={{ maxWidth: "150px" }}
-              />
+            <div className="p-3 text-center">
+              <a href="/HomePage">
+                <Image
+                  src={logo}
+                  alt="Bachelor's Dhobi Logo"
+                  fluid
+                  style={{ maxWidth: "200px" }}
+                  className="mb-0"
+                />
+              </a>
             </div>
 
-            <Nav className="flex-column mt-4">
+            <Nav className="flex-column mt-5">
               <Nav.Link
                 href="/HomePage"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaHome className="me-3" size={20} /> Home
+                <FaHome className="me-3" size={18} /> Home
               </Nav.Link>
               <Nav.Link
                 href="/Stores"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaStore className="me-3" size={20} /> Stores
+                <FaStore className="me-3" size={18} /> Stores
               </Nav.Link>
               <Nav.Link
                 href="/OrderStatus"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaClipboardList className="me-3" size={20} /> Orders
+                <FaClipboardList className="me-3" size={18} /> Orders
               </Nav.Link>
               <Nav.Link
                 href="/OrderHistory"
-                className="p-3 d-flex align-items-center text-dark"
+                className="py-3 px-4 d-flex align-items-center text-white"
               >
-                <FaHistory className="me-3" size={20} /> History
+                <FaHistory className="me-3" size={18} /> History
               </Nav.Link>
             </Nav>
 
-            <div className="mt-auto p-3">
+            <div className="mt-auto p-4">
               <Button
                 onClick={handleLogout}
-                variant="dark"
-                className="w-100 d-flex align-items-center justify-content-center rounded-4"
+                variant="light"
+                className="w-100 d-flex align-items-center justify-content-center rounded-pill py-2"
               >
                 <FaSignOutAlt className="me-2" /> Logout
               </Button>
@@ -193,12 +187,6 @@ const ProfilePage = () => {
                   <h2>{userInfo.name}</h2>
                   <p className="text-muted">{userInfo.email}</p>
                 </div>
-                <Button
-                  variant="outline-primary"
-                  className="d-flex align-items-center"
-                >
-                  Edit <FaEdit className="ms-2" />
-                </Button>
               </Col>
             </Row>
 
@@ -341,4 +329,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfilePage2;

@@ -1,4 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
@@ -59,6 +62,31 @@ import "./Home.css";
 
 const HomePage = () => {
   const sliderRef = useRef(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:8080/api/contact/submit", formData);
+      toast.success("Form submitted successfully!", { position: "top-right" });
+      setFormData({ name: "", phone: "", email: "", message: "" });
+    } catch (error) {
+      toast.error("Error submitting the form. Please try again.", {
+        position: "top-right",
+      });
+    }
+  };
 
   useEffect(() => {
     // Only apply this if user is already logged in and shouldn't go back
@@ -175,7 +203,7 @@ const HomePage = () => {
               </p>
               <Button variant="dark" className="mt-3">
                 <a
-                  href="#service"
+                  href="/SchedulePickup"
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   Schedule a Pickup
@@ -465,7 +493,7 @@ const HomePage = () => {
               </ul>
               <Button className="me-2 mt-3 fo-btn">
                 <a
-                  href="/Signup"
+                  href="/SchedulePickup"
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   Make your First Order
@@ -597,18 +625,27 @@ const HomePage = () => {
       </section>
 
       {/* Contact Section */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
       <section id="contact" className="py-5">
         <div className="container bg-info-subtle contact p-5">
           <h1 className="text-center mb-5">Contact Us</h1>
           <div className="row justify-content-center">
             <div className="col-md-8">
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <input
                       type="text"
-                      className="form-control "
+                      className="form-control"
                       placeholder="Your name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
                     />
                   </div>
                   <div className="col-md-6 mb-3">
@@ -616,6 +653,10 @@ const HomePage = () => {
                       type="tel"
                       className="form-control"
                       placeholder="Your phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
                     />
                   </div>
                 </div>
@@ -624,6 +665,10 @@ const HomePage = () => {
                     type="email"
                     className="form-control"
                     placeholder="Your email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -631,10 +676,19 @@ const HomePage = () => {
                     className="form-control"
                     rows="4"
                     placeholder="Your message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
                   ></textarea>
                 </div>
                 <div className="text-center">
-                  <Button className="me-2 mt-3 contact-btn">Submit</Button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary mt-3 contact-btn"
+                  >
+                    Submit
+                  </button>
                 </div>
               </form>
             </div>
