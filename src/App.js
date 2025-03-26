@@ -18,6 +18,7 @@ import WashFold from "./pages/Wash-Fold";
 import WashIron from "./pages/Wash-Iron";
 import SchedulePickup from "./pages/SchedulePickup";
 import ProfilePage from "./pages/Profile";
+import ProfilePage2 from "./pages/Profile2";
 import OrderStatus from "./pages/OrderStatus";
 import OrderHistory from "./pages/OrderHistory";
 import ProtectedRoute from "./pages/ProtectedRoute";
@@ -60,6 +61,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ProfilePage2"
+          element={
+            <ProtectedRoute>
+              <ProfilePage2 />
             </ProtectedRoute>
           }
         />

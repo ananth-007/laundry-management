@@ -4,6 +4,7 @@ import logo from "../assets/logo.png";
 import "./Navbar.css";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { User, UserCircle, CircleUser } from "lucide-react";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -155,13 +156,14 @@ const Navbar = () => {
               </li>
               {/* Profile Icon */}
               <li className="nav-item">
-                <a href="/ProfilePage" className="profile-icon ms-3">
-                  <img
-                    src="profile.png"
-                    width="35px"
-                    height="35px"
-                    alt="Profile"
-                  />
+                <a href="/ProfilePage2" className="profile-icon ms-3">
+                  {/* <UserCircle size={35} className="text-muted" /> */}
+                  <User size={35} strokeWidth={1.5} className="text-primary" />
+                  {/* <CircleUser
+                    size={35}
+                    strokeWidth={1.5}
+                    className="text-primary"
+                  /> */}
                 </a>
               </li>
             </ul>

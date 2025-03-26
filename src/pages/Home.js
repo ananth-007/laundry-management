@@ -203,7 +203,7 @@ const HomePage = () => {
               </p>
               <Button variant="dark" className="mt-3">
                 <a
-                  href="#service"
+                  href="/SchedulePickup"
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   Schedule a Pickup
@@ -493,7 +493,7 @@ const HomePage = () => {
               </ul>
               <Button className="me-2 mt-3 fo-btn">
                 <a
-                  href="/Signup"
+                  href="/SchedulePickup"
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   Make your First Order

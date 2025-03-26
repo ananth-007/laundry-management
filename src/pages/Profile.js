@@ -26,7 +26,7 @@ import {
 } from "react-icons/fa";
 import LaundryBanner from "../assets/ProfileImg/laundry-banner.png";
 import logo from "../assets/logo.png";
-import profileImg from "../assets/ProfileImg/profile-img.jpg";
+import defaultProfileImg from "../assets/ProfileImg/profile-img.jpg";
 import axios from "axios";
 
 const ProfilePage = () => {
@@ -35,16 +35,14 @@ const ProfilePage = () => {
     email: "",
     phone: "",
     address: "",
-    avatarUrl: profileImg,
     username: "",
   });
 
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -58,36 +56,60 @@ const ProfilePage = () => {
         setError(null);
 
         const token = localStorage.getItem("token");
-        console.log("Token being sent:", token); // Log the token
+        console.log("Token being sent:", token);
 
-        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Ensure correct Bearer format
-          },
-        });
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/api/profile/details`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
-        console.log("Response status:", response.status); // Log response status
+          setUserInfo(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
+        } catch (error) {
+          console.error("Profile fetch error:", error);
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error response:", errorText);
-          throw new Error(errorText || "Failed to fetch profile");
+          // Detailed error handling
+          if (error.response) {
+            switch (error.response.status) {
+              case 401:
+                console.error("Unauthorized: Invalid token");
+                localStorage.removeItem("token");
+                navigate("/login");
+                break;
+
+              case 404:
+                setError("Profile not found. Contact support.");
+                break;
+
+              case 500:
+                setError("Server error. Please try again later.");
+                break;
+
+              default:
+                setError(`Unexpected error: ${error.response.status}`);
+            }
+          } else if (error.request) {
+            setError("No response from server. Check your network.");
+          } else {
+            setError("Error setting up the request.");
+          }
         }
-
-        const data = await response.json();
-        setUserInfo(data);
-      } catch (err) {
-        console.error("Detailed error:", err);
-        setError(err.message);
+      } catch (generalError) {
+        console.error("Unexpected error:", generalError);
+        setError("An unexpected error occurred.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserProfile();
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
     // Clear auth data
@@ -101,7 +123,7 @@ const ProfilePage = () => {
     window.location.href = "/Login";
   };
 
-  const handleFileChange = (event) => {
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
 
     // Check if file exists and validate file type
@@ -119,13 +141,10 @@ const ProfilePage = () => {
       return;
     }
 
-    // Create a preview URL for the image
+    // Create a preview of the selected image
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewUrl(reader.result);
-      // Don't update the state with the full base64 data
-      // Just store the file itself for later upload
-      setSelectedFile(file);
+      setSelectedImage(reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -142,42 +161,14 @@ const ProfilePage = () => {
         return;
       }
 
-      let avatarUrl = userInfo.avatarUrl;
-
-      // Only upload if there's a new file
-      if (selectedFile) {
-        try {
-          const formData = new FormData();
-          formData.append("avatar", selectedFile);
-
-          const uploadResponse = await axios.post(
-            `${API_BASE_URL}/api/users/upload-avatar`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          // Get the URL from the server's response
-          avatarUrl = uploadResponse.data.avatarUrl;
-        } catch (uploadErr) {
-          console.error("Error uploading avatar:", uploadErr);
-          throw new Error("Failed to upload avatar. Please try again.");
-        }
-      }
-
       // Update user profile
       const response = await axios.patch(
-        `${API_BASE_URL}/api/users/profile`,
+        `${API_BASE_URL}/api/profile/update`,
         {
           fullName: userInfo.fullName,
           email: userInfo.email,
           phone: userInfo.phone,
           address: userInfo.address,
-          avatarUrl: avatarUrl,
         },
         {
           headers: {
@@ -190,13 +181,11 @@ const ProfilePage = () => {
       setUserInfo({
         ...userInfo,
         ...response.data,
-        avatarUrl: response.data.avatarUrl || userInfo.avatarUrl,
       });
 
       setIsEditing(false);
       setSuccess("Profile updated successfully!");
-      setPreviewUrl(null);
-      setSelectedFile(null); // Clear the selected file
+      setSelectedImage(null);
     } catch (err) {
       console.error("Error updating profile:", err);
       setError(
@@ -294,7 +283,7 @@ const ProfilePage = () => {
             >
               <div className="position-relative">
                 <Image
-                  src={previewUrl || userInfo.avatarUrl}
+                  src={selectedImage || defaultProfileImg}
                   roundedCircle
                   style={{
                     width: "150px",
@@ -305,26 +294,30 @@ const ProfilePage = () => {
                     boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
                   }}
                 />
-                <div
-                  className="position-absolute bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
-                  style={{
-                    bottom: "10px",
-                    right: "5px",
-                    width: "40px",
-                    height: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => document.getElementById("avatarInput").click()}
-                >
-                  <FaCamera size={18} />
-                  <input
-                    id="avatarInput"
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                </div>
+                {isEditing && (
+                  <div
+                    className="position-absolute bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
+                    style={{
+                      bottom: "10px",
+                      right: "5px",
+                      width: "40px",
+                      height: "40px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() =>
+                      document.getElementById("avatarInput").click()
+                    }
+                  >
+                    <FaCamera size={18} />
+                    <input
+                      id="avatarInput"
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -617,7 +610,6 @@ const ProfilePage = () => {
                                 type="file"
                                 accept=".jpg,.jpeg,.png"
                                 style={{ display: "none" }}
-                                onChange={handleFileChange}
                               />
                             </div>
                           </Form.Group>
